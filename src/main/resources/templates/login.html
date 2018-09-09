@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:td="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{Layout.html}"><head>
+    <link rel="stylesheet" th:href="@{/static/bower_components/bootstrap/dist/css/bootstrap.min.css}">
+</head>
+<body>
+
+<section layout:fragment="content" class="container">
+
+<h1 th:text="#{loginForm.title}">form</h1>
+<form th:action="@{/processlogin}" method="POST" enctype="utf8">
+    <!--<div class="form-row">-->
+        <!--<div class="form-group col-md-6">-->
+            <!--<label for="email" th:text="#{registerForm.label.email}">username</label>-->
+            <!--<input type="text" th:field="*{email}" class="form-control" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''" id="email" th:placeholder="#{registerForm.label.email}">-->
+            <!--<div class="invalid-feedback"-->
+                 <!--th:each="error: ${#fields.errors('username')}"-->
+                 <!--th:text="${error}">-->
+                <!--Please provide a valid email.-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+
+    <!--<div class="form-row">-->
+        <!--<div class="form-group col-md-6">-->
+            <!--<label for="password" th:text="#{registerForm.label.password}">password</label>-->
+            <!--<input type="text" th:field="*{password}" class="form-control" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''" id="password" th:placeholder="#{registerForm.label.password}">-->
+            <!--<div class="invalid-feedback"-->
+                 <!--th:each="error: ${#fields.errors('password')}"-->
+                 <!--th:text="${error}">-->
+                <!--Please provide a valid password.-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="email" th:text="#{registerForm.label.email}">email</label>
+            <input type="text" name="username" class="form-control" id="email" th:placeholder="#{registerForm.label.email}">
+            <!--<div class="invalid-feedback"-->
+                 <!--th:each="error: ${#fields.errors('username')}"-->
+                 <!--th:text="${error}">-->
+                <!--Please provide a valid email.-->
+            <!--</div>-->
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="password" th:text="#{registerForm.label.password}">password</label>
+            <input type="text" name="password" class="form-control" id="password" th:placeholder="#{registerForm.label.password}">
+
+        </div>
+    </div>
+
+    <button type="submit" th:text="#{loginForm.title}" class="btn btn-primary">Sign in</button>
+</form>
+
+</section>
+</body>
+</html>

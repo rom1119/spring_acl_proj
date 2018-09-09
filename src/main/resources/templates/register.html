@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+<body>
+<h1 th:text="#{registerForm.title}">form</h1>
+<form th:action="@{/register}" th:object="${user}" method="POST" enctype="utf8">
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="firstName" th:text="#{registerForm.label.firstName}">firstName</label>
+            <input type="text" th:field="*{firstName}" class="form-control" th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid' : ''" id="firstName" th:placeholder="#{registerForm.label.firstName}">
+            <div class="invalid-feedback"
+                 th:each="error: ${#fields.errors('firstName')}"
+                 th:text="${error}">
+                Please provide a valid firstName.
+            </div>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="lastName" th:text="#{registerForm.label.lastName}">lastName</label>
+            <input type="text" th:field="*{lastName}" class="form-control" th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid' : ''" id="lastName" th:placeholder="#{registerForm.label.lastName}">
+            <div class="invalid-feedback"
+                 th:each="error: ${#fields.errors('lastName')}"
+                 th:text="${error}">
+                Please provide a valid lastName.
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="email" th:text="#{registerForm.label.email}">email</label>
+            <input type="text" th:field="*{email}" class="form-control" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''" id="email" th:placeholder="#{registerForm.label.email}">
+            <div class="invalid-feedback"
+                 th:each="error: ${#fields.errors('email')}"
+                 th:text="${error}">
+                Please provide a valid email.
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="password" th:text="#{registerForm.label.password}">password</label>
+            <input type="text" th:field="*{password}" class="form-control" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''" id="password" th:placeholder="#{registerForm.label.password}">
+            <div class="invalid-feedback"
+                 th:each="error: ${#fields.errors('password')}"
+                 th:text="${error}">
+                Please provide a valid password.
+            </div>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="confirmPassword" th:text="#{registerForm.label.confirmPassword}">confirmPassword</label>
+            <input type="text" th:field="*{confirmPassword}" class="form-control" th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid' : ''" id="confirmPassword" th:placeholder="#{registerForm.label.confirmPassword}">
+            <div class="invalid-feedback"
+                 th:each="error: ${#fields.errors('confirmPassword')}"
+                 th:text="${error}">
+                Please provide a valid confirmPassword.
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" th:text="#{registerForm.title}" class="btn btn-primary">Sign in</button>
+</form>
+
+<a th:href="@{/login.html}" th:text="#{label.button.loginLink}">login</a>
+</body>
+</html>

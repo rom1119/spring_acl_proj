@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:td="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{Layout.html}"><head>
+</head>
+<body>
+
+<section layout:fragment="content" class="container">
+
+<h1 th:text="#{registerForm.title}">form</h1>
+<form th:action="@{/book/edit}" th:object="${book}" method="POST" enctype="multipart/form-data">
+    <input type="hidden" th:field="*{id}">
+    <!--<input type="hidden" th:field="*{version}"/>-->
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="name" th:text="#{book.label.name}">Nazwa</label>
+            <input type="text" th:field="*{name}" class="form-control" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''" id="name" th:placeholder="#{book.label.name}">
+            <div class="invalid-feedback"
+                 th:each="error: ${#fields.errors('name')}"
+                 th:text="${error}">
+                Please provide a valid firstName.
+            </div>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="author" th:text="#{book.label.author}">autor</label>
+            <input type="text" th:field="*{author}" class="form-control" th:classappend="${#fields.hasErrors('author')} ? 'is-invalid' : ''" id="author" th:placeholder="#{book.label.author}">
+            <div class="invalid-feedback"
+                 th:each="error: ${#fields.errors('author')}"
+                 th:text="${error}">
+                Please provide a valid lastName.
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="description" th:text="#{book.label.description}">opis</label>
+            <input type="text" th:field="*{description}" class="form-control" th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''" id="description" th:placeholder="#{book.label.description}">
+            <div class="invalid-feedback"
+                 th:each="error: ${#fields.errors('description')}"
+                 th:text="${error}">
+                Please provide a valid email.
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <button type="submit" th:text="#{editForm.title}" class="btn btn-primary">Zapisz</button>
+</form>
+
+</section>
+
+</body>
+</html>

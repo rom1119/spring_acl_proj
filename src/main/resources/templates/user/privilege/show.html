@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{Layout.html}">
+
+<body>
+
+<section layout:fragment="content" class="container">
+    <div class="jumbotron" th:object="${entity}">
+        <h1 class="display-4" th:text="*{name}">WRITE</h1>
+        <hr class="my-4">
+
+        <hr class="my-4">
+        <a class="btn btn-primary btn-md" th:href="@{/privilege/{id}/edit(id=*{id})" role="button">Edytuj</a>
+        <a class="btn btn-danger btn-md" th:href="@{/privilege/{id}/delete(id=*{id})" role="button">Usuń</a>
+    </div>
+</section>
+<footer>
+    <p layout:fragment="custom-footer">This is some footer content from content page 1</p>
+</footer>
+
+</body>
+</html>

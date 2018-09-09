@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{Layout.html}">
+
+<body>
+
+<section layout:fragment="content" class="container">
+    <div class="card border-primary mb-3" style="max-width: 18rem;" th:object="${entity}">
+        <div class="card-header" th:text="|*{firstName} *{lastName}|">Header</div>
+        <div class="card-body text-primary">
+            <h5 class="card-title"  th:text="*{email}">Primary card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        </div>
+    </div>
+</section>
+<footer>
+    <p layout:fragment="custom-footer">This is some footer content from content page 1</p>
+</footer>
+
+</body>
+</html>

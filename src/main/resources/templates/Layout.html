@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.springframework.org/schema/data/jaxb" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Layout page</title>
+    <link rel="stylesheet" th:href="@{/static/bower_components/bootstrap/dist/css/bootstrap.min.css}">
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Navbar</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/user}">Użytkownicy</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/role}">Role</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/privilege}">Uprawnienia</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/book}">Książki</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Listy dostępów
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" th:href="@{/acl_class}">Typy obiektow</a>
+                        <a class="dropdown-item" th:href="@{/acl_security_id}">Identyfikatory zabezpieczeń</a>
+                        <a class="dropdown-item" th:href="@{/acl_object_identity}">Obiekty zabezpieczone</a>
+                        <a class="dropdown-item" th:href="@{/acl_entry}">Wpisy zabezpieczń</a>
+                    </div>
+                </li>
+
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active" sec:authorize="not isAuthenticated()">
+                    <a class="nav-link" th:href="@{/login}">Zaloguj się <span class="sr-only">(current)</span></a>
+                </li>
+            </ul>
+            <div class="bg-dark p-4" sec:authorize="isAuthenticated()">
+                <h3 class="text-white">Zalogowany jako <h3 class="text-white" sec:authentication="name"></h3></h3>
+                <a class="nav-link" th:href="@{/logout}">Wyloguj <span class="sr-only">(current)</span></a>
+
+            </div>
+        </div>
+    </nav>
+</header>
+<section layout:fragment="content">
+    <p>Page content goes here</p>
+</section>
+<footer>
+    <p>My footer</p>
+    <p layout:fragment="custom-footer">Custom footer here</p>
+</footer>
+<script th:src="@{/static/bower_components/jquery/dist/jquery.min.js}"></script>
+<script th:src="@{/static/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
+</body>
+</html>

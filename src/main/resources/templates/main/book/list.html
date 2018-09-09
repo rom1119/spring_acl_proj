@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:td="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{Layout.html}">
+
+<body>
+
+
+<section layout:fragment="content" class="container">
+    <h3 th:if="${removed}" th:text="|Książka '${name}' została usunięta|">Usunięto</h3>
+    <h3 th:if="${edited}" th:text="|Książka '${name}' została zapisana|">Zapisano</h3>
+    <table class="table">
+        <caption>List of users</caption>
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">ID</th>
+            <th scope="col">Nazwa</th>
+            <th scope="col">Autor</th>
+            <th scope="col">Opis</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="entity,iter : ${entities}" th:object="${entity}">
+            <th scope="row" th:text="${iter.index + 1}">1</th>
+            <td th:text="*{id}">1</td>
+            <td th:text="*{name}">Jan</td>
+            <td th:text="*{author}">Kowalski</td>
+            <td th:text="*{description}">kowalski@wp.pl</td>
+            <td>
+                <a th:href="@{/book/{id}(id=*{id})}" class="btn btn-outline-success btn-sm">Zobacz szczegóły</a>
+                <a th:href="@{/book/{id}/edit(id=*{id})}" class="btn btn-outline-success btn-sm">Edytuj</a>
+                <!--<a th:href="@{/user/{id}/delete(id=*{id})}" sec:authorize="hasPermission(#vars.entity,'OWNER')" class="btn btn-outline-danger btn-sm">Usuń</a>-->
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+<footer>
+    <p layout:fragment="custom-footer">This is some footer content from content page 1</p>
+</footer>
+
+</body>
+</html>

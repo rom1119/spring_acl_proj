@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<validation-config
+        xmlns="http://xmlns.jcp.org/xml/ns/validation/configuration"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/validation/configuration
+            http://xmlns.jcp.org/xml/ns/validation/configuration/validation-configuration-2.0.xsd"
+        version="2.0">
+
+    <!--<default-provider>com.springproj.validation.CustomValidationProvider</default-provider>-->
+
+    <!--<message-interpolator>com.springproj.validation.CustomMessageInterpolator</message-interpolator>-->
+    <!--<traversable-resolver>com.springproj.validation.CustomTraversableResolver</traversable-resolver>-->
+    <!--<constraint-validator-factory>-->
+    <!--com.springproj.validation.CustomConstraintValidatorFactory-->
+    <!--</constraint-validator-factory>-->
+    <!--<parameter-name-provider>com.acme.ParameterNameProvider</parameter-name-provider>-->
+    <!--<clock-provider>com.acme.ClockProvider</clock-provider>-->
+
+    <!--<value-extractor>com.acme.ContainerValueExtractor</value-extractor>-->
+
+    <!--<executable-validation enabled="true">-->
+        <!--<default-validated-executable-types>-->
+            <!--<executable-type>CONSTRUCTORS</executable-type>-->
+            <!--<executable-type>NON_GETTER_METHODS</executable-type>-->
+            <!--<executable-type>GETTER_METHODS</executable-type>-->
+        <!--</default-validated-executable-types>-->
+    <!--</executable-validation>-->
+
+    <!--<constraint-mapping>META-INF/constraints/User.xml</constraint-mapping>-->
+
+    <property name="hibernate.validator.fail_fast">false</property>
+</validation-config>

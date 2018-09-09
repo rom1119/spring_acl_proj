@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:td="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{Layout.html}"><head>
+</head>
+<body>
+
+<section layout:fragment="content" class="container">
+
+    <h1 th:text="#{registerForm.title}">form</h1>
+    <form th:action="@{/user/new}" th:object="${user}" method="POST" enctype="multipart/form-data">
+        <input type="hidden" th:field="*{id}">
+        <input type="hidden" th:field="*{version}"/>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="firstName" th:text="#{registerForm.label.firstName}">firstName</label>
+                <input type="text" th:field="*{firstName}" class="form-control" th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid' : ''" id="firstName" th:placeholder="#{registerForm.label.firstName}">
+                <div class="invalid-feedback"
+                     th:each="error: ${#fields.errors('firstName')}"
+                     th:text="${error}">
+                    Please provide a valid firstName.
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="lastName" th:text="#{registerForm.label.lastName}">lastName</label>
+                <input type="text" th:field="*{lastName}" class="form-control" th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid' : ''" id="lastName" th:placeholder="#{registerForm.label.lastName}">
+                <div class="invalid-feedback"
+                     th:each="error: ${#fields.errors('lastName')}"
+                     th:text="${error}">
+                    Please provide a valid lastName.
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="email" th:text="#{registerForm.label.email}">email</label>
+                <input type="text" th:field="*{email}" class="form-control" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''" id="email" th:placeholder="#{registerForm.label.email}">
+                <div class="invalid-feedback"
+                     th:each="error: ${#fields.errors('email')}"
+                     th:text="${error}">
+                    Please provide a valid email.
+                </div>
+            </div>
+            <div class="form-group col-md-6" th:object="${user.userDetails}">
+                <label for="score" th:text="#{registerForm.label.score}">punkty</label>
+                <input type="text" th:field="*{score}" class="form-control" th:classappend="${#fields.hasErrors('score')} ? 'is-invalid' : ''" id="score" th:placeholder="#{registerForm.label.score}">
+                <div class="invalid-feedback"
+                     th:each="error: ${#fields.errors('score')}"
+                     th:text="${error}">
+                    Please provide a valid score.
+                </div>
+                <input type="hidden" th:field="*{id}">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="password" th:text="#{registerForm.label.password}">password</label>
+                <input type="text" th:field="*{password}" th:value="|''|" class="form-control" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''" id="password" th:placeholder="#{registerForm.label.password}">
+                <div class="invalid-feedback"
+                     th:each="error: ${#fields.errors('password')}"
+                     th:text="${error}">
+                    Please provide a valid password.
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="password" th:text="#{registerForm.label.roles}">role</label>
+                <select th:field="*{roles}" multiple>
+                    <option th:each="role : ${roles}" th:text="${role.name}" th:value="${role.id}">
+                        ROLE_ADMIN
+                    </option>
+                </select>
+                <div class="invalid-feedback"
+                     th:each="error: ${#fields.errors('roles')}"
+                     th:text="${error}">
+                    Invalid value
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="image" th:text="#{registerForm.label.image}">role</label>
+                <input type="file" th:field="*{file}" class="form-control" th:classappend="${#fields.hasErrors('file')} ? 'is-invalid' : ''" id="image" th:placeholder="#{registerForm.label.image}">
+                <div class="invalid-feedback"
+                     th:each="error: ${#fields.errors('file')}"
+                     th:text="#{${error}}">
+                    Invalid file
+                </div>
+            </div>
+        </div>
+        <button type="submit" th:text="#{editForm.title}" class="btn btn-primary">Sign in</button>
+    </form>
+
+</section>
+
+<a th:href="@{/login.html}" th:text="#{label.button.loginLink}">login</a>
+</body>
+</html>

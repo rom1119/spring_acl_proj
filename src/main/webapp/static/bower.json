@@ -1,0 +1,13 @@
+{
+  "name": "static",
+  "authors": [
+    "Roman Pytka <rom1119@poczta.onet.pl>"
+  ],
+  "description": "app test iin spring",
+  "main": "",
+  "license": "MIT",
+  "homepage": "/",
+  "dependencies": {
+    "jquery": "^3.3.1"
+  }
+}

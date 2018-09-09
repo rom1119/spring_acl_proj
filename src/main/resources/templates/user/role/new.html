@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:td="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{Layout.html}"><head>
+</head>
+<body>
+
+<section layout:fragment="content" class="container">
+
+    <h1 th:text="#{registerForm.title}">form</h1>
+    <form th:action="@{/role/new}" th:object="${entity}" method="POST" enctype="multipart/form-data">
+        <input type="hidden" th:field="*{id}">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="firstName" th:text="#{registerForm.label.firstName}">firstName</label>
+                <input type="text" th:field="*{name}" class="form-control" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''" id="firstName" th:placeholder="#{registerForm.label.name}">
+                <div class="invalid-feedback"
+                     th:each="error: ${#fields.errors('name')}"
+                     th:text="${error}">
+                    Please provide a valid firstName.
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="privileges" th:text="#{registerForm.label.roles}">role</label>
+                <select th:field="*{privileges}" multiple id="privileges">
+                    <option th:each="el : ${roles}" th:text="${el.name}" th:value="${el.id}">
+                        WRITE
+                    </option>
+                </select>
+                <div class="invalid-feedback"
+                     th:each="error: ${#fields.errors('privileges')}"
+                     th:text="${error}">
+                    Invalid value
+                </div>
+            </div>
+
+        </div>
+
+        <button type="submit" th:text="#{editForm.title}" class="btn btn-primary">Sign in</button>
+    </form>
+
+</section>
+
+<a th:href="@{/login.html}" th:text="#{label.button.loginLink}">login</a>
+</body>
+</html>
