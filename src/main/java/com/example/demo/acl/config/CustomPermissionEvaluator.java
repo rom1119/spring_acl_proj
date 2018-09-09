@@ -2,7 +2,7 @@ package com.example.demo.acl.config;
 
 import com.example.demo.user.model.User;
 import com.example.demo.user.model.UserDto;
-import com.example.demo.main.repository.UserRepository;
+import com.example.demo.user.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
@@ -41,7 +41,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
 
         if (permission.equals("OWNER") ) {
             if (entity.toLowerCase().equals("user")) {
-                User user = userRepository.findById((String) serializable);
+                User user = userRepository.findById((String) serializable).get();
 
                 if (user == null) {
                     return true;

@@ -18,7 +18,7 @@
             <property name="javax.persistence.jdbc.url"
                       value="jdbc:mysql://localhost/pacgame_db?useUnicode=true"/>
             <property name="javax.persistence.jdbc.user" value="root"/>
-            <property name="javax.persistence.jdbc.password" value="agdrtv193"/>
+            <property name="javax.persistence.jdbc.password" value=""/>
             <property name="javax.persistence.serverTimezone" value="UTC"/>
             <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
         </properties>

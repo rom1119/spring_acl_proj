@@ -35,8 +35,6 @@ public class StorageManager implements StorageService {
             filePath = pathFileManager.generatePath(fileWrapper);
         }
 
-        System.out.println(filePath);
-
         fileUploader.upload(fileWrapper.getFile(), pathFileManager.getDir(filePath), pathFileManager.getFile(filePath));
 
         fileWrapper.setFileName(pathFileManager.getFile(filePath));

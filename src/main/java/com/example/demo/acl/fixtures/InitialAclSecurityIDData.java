@@ -1,20 +1,16 @@
 package com.example.demo.acl.fixtures;
 
-import com.example.demo.acl.model.AclClass;
 import com.example.demo.acl.model.AclSecurityID;
-import com.example.demo.acl.repository.AclClassRepository;
 import com.example.demo.acl.repository.AclSecurityIDRepository;
 import com.example.demo.main.fixtures.FixturesInterface;
-import com.example.demo.main.model.Book;
-import com.example.demo.main.repository.PrivilegeRepository;
-import com.example.demo.main.repository.RoleRepository;
-import com.example.demo.main.repository.UserRepository;
+import com.example.demo.user.repository.PrivilegeRepository;
+import com.example.demo.user.repository.RoleRepository;
+import com.example.demo.user.repository.UserRepository;
 import com.example.demo.user.model.Privilege;
 import com.example.demo.user.model.Role;
 import com.example.demo.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -53,10 +49,6 @@ public class InitialAclSecurityIDData implements FixturesInterface {
 
             aclSecurityIDRepository.save(aclClass);
         });
-
-        System.out.println("LOLK");
-        System.out.println(getAllUsers().size());
-        System.out.println(getAllUsers().size());
 
         getAllRoles().stream().forEach(el -> {
             AclSecurityID aclClass = new AclSecurityID();

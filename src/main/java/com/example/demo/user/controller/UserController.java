@@ -4,14 +4,13 @@ import com.example.demo.user.exception.ResourceNotFoundException;
 import com.example.demo.user.model.Role;
 import com.example.demo.user.model.User;
 import com.example.demo.user.model.UserDto;
-import com.example.demo.main.repository.RoleRepository;
-import com.example.demo.main.repository.UserRepository;
+import com.example.demo.user.repository.RoleRepository;
+import com.example.demo.user.repository.UserRepository;
 import com.example.demo.main.service.StorageManager;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -59,10 +58,11 @@ public class UserController {
     }
 
 
+    @PreAuthorize("hasPermission(#user, 'READ')")
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getOne(@PathVariable String id, Model model)
     {
-        User user = userRepository.findById(id);
+        User user = userRepository.findById(id).get();
         if (user == null) {
             throw new ResourceNotFoundException("Nie znaleziono strony");
         }
@@ -71,7 +71,7 @@ public class UserController {
         return pathToView("show");
     }
 
-
+    @PreAuthorize("hasAuthority('WRITE_PRIVILEGE')")
     @RequestMapping(path = "/{id}/new", method = RequestMethod.GET)
     public String createView(Model model)
     {
@@ -81,7 +81,7 @@ public class UserController {
         return pathToView("new");
     }
 
-    @PreAuthorize("hasPermission(#entity, 'AUDIT')")
+    @PreAuthorize("hasAuthority('WRITE_PRIVILEGE')")
     @RequestMapping(path = "/new", method = RequestMethod.POST)
     public String createProccess(@Param("entity") @Valid @ModelAttribute UserDto entity,
                                  BindingResult result,
@@ -93,7 +93,7 @@ public class UserController {
         }
 
         User user = modelMapper.map(entity, User.class);
-        User userDb = userRepository.findById(user.getId());
+        User userDb = userRepository.findById(user.getId()).get();
         user.setFileName(userDb.getFileName());
 
         storageService.updateFile(user);
@@ -103,11 +103,10 @@ public class UserController {
         return redirectToIndex();
     }
 
-
     @RequestMapping(path = "/{id}/edit", method = RequestMethod.GET)
     public String editView(@Param("id") @PathVariable String id, Model model)
     {
-        User user = userRepository.findById(id);
+        User user = userRepository.findById(id).get();
         if (user == null) {
             throw new ResourceNotFoundException("Nie znaleziono strony");
         }
@@ -121,7 +120,7 @@ public class UserController {
     }
 
 //    @PreAuthorize("hasPermission(#user, 'OWNER')")
-//    @PreAuthorize("hasPermission(#user, 'ADMINISTRATION')")
+    @PreAuthorize("hasPermission(#user, 'WRITE')")
     @RequestMapping(path = "/edit", method = RequestMethod.POST)
     public String editProccess(@Param("user") @Valid @ModelAttribute("user") UserDto userDto,
                        BindingResult result,
@@ -136,7 +135,12 @@ public class UserController {
         }
 
         User user = modelMapper.map(userDto, User.class);
-        User userDb = userRepository.findById(user.getId());
+        User userDb = userRepository.findById(user.getId()).get();
+
+        if (userDb == null) {
+            throw new ResourceNotFoundException("Nie znaleziono strony");
+        }
+
         user.setFileName(userDb.getFileName());
 
         storageService.updateFile(user);
@@ -151,9 +155,10 @@ public class UserController {
 
     }
 
+    @PreAuthorize("hasPermission(#user, 'DELETE')")
     @RequestMapping(path = "/{id}/delete", method = RequestMethod.GET)
     public String delete(@PathVariable String id, RedirectAttributes attributes) throws IOException {
-        User user = userRepository.findById(id);
+        User user = userRepository.findById(id).get();
         if (user == null) {
             throw new ResourceNotFoundException("Nie znaleziono strony");
         }

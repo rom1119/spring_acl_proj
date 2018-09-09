@@ -1,7 +1,7 @@
 package com.example.demo.main.config;
 
 import com.example.demo.acl.config.UserOwnerVoter;
-import com.example.demo.main.repository.UserRepository;
+import com.example.demo.user.repository.UserRepository;
 import com.example.demo.main.service.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

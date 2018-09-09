@@ -8,7 +8,7 @@ import com.example.demo.acl.repository.AclObjectIdentityRepository;
 import com.example.demo.acl.repository.AclSecurityIDRepository;
 import com.example.demo.main.model.Book;
 import com.example.demo.main.repository.BookRepository;
-import com.example.demo.main.repository.UserRepository;
+import com.example.demo.user.repository.UserRepository;
 import com.example.demo.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;

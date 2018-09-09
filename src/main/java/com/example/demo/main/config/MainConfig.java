@@ -2,8 +2,8 @@ package com.example.demo.main.config;
 
 import com.example.demo.acl.config.AclConfig;
 import com.example.demo.acl.config.AclMethodSecurityConfiguration;
-import com.example.demo.main.service.IUserService;
-import com.example.demo.main.service.UserService;
+import com.example.demo.user.service.IUserService;
+import com.example.demo.user.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.DataSourceBuilder;

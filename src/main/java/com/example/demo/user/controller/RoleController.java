@@ -1,6 +1,6 @@
 package com.example.demo.user.controller;
 
-import com.example.demo.main.repository.RoleRepository;
+import com.example.demo.user.repository.RoleRepository;
 import com.example.demo.user.exception.ResourceNotFoundException;
 import com.example.demo.user.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;

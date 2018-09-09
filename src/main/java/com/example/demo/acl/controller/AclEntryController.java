@@ -49,17 +49,18 @@ public class AclEntryController {
     }
 
     @RequestMapping(path = "/acl_object_identity/{aclObjectIdentityId}", method = RequestMethod.GET)
-    public String getAll(@PathVariable Long aclObjectIdentityId, Model model)
+    public String getAllByAclObjectIdentity(@PathVariable Long aclObjectIdentityId, Model model)
     {
-        Optional<AclObjectIdentity> aclObjectIdentity = aclObjectIdentityRepository.findById(aclObjectIdentityId);
+        AclObjectIdentity aclObjectIdentity = aclObjectIdentityRepository.findById(aclObjectIdentityId).get();
 
-        if (aclObjectIdentityRepository == null) {
+        if (aclObjectIdentity == null) {
             throw new ResourceNotFoundException("Nie znaleziono strony");
         }
-        model.addAttribute("entities", aclObjectIdentity.get().getEntries());
+        model.addAttribute("entities", aclObjectIdentity.getEntries());
 
         return pathToView("list");
     }
+
 
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public String getOne(@PathVariable Long id, Model model)
@@ -110,7 +111,7 @@ public class AclEntryController {
     @RequestMapping(path = "/{id}/edit", method = RequestMethod.GET)
     public String editView(@PathVariable int id, Model model)
     {
-        Optional<AclEntry> entity = aclEntryRepository.findById((long) id);
+        AclEntry entity = aclEntryRepository.findById((long) id).get();
 
         List<AclObjectIdentity> aclObjectIdentityList = aclObjectIdentityRepository.findAll();
         List<AclSecurityID> aclSecurityIDList = aclSecurityIDRepository.findAll();
@@ -143,11 +144,11 @@ public class AclEntryController {
     @PreAuthorize("hasPermission(#id, 'User', 'AUDIT')")
     @RequestMapping(path = "/{id}/delete", method = RequestMethod.GET)
     public String delete(@PathVariable Long id, RedirectAttributes attributes) throws IOException {
-        Optional<AclEntry> entity = aclEntryRepository.findById(id);
+        AclEntry entity = aclEntryRepository.findById(id).get();
         if (entity == null) {
             throw new ResourceNotFoundException("Nie znaleziono strony");
         }
-        aclEntryRepository.delete(entity.get());
+        aclEntryRepository.delete(entity);
 
 
         attributes.addFlashAttribute("removed", true);
