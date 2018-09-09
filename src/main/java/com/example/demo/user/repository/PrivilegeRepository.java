@@ -1,4 +1,4 @@
-package com.example.demo.main.repository;
+package com.example.demo.user.repository;
 
 import com.example.demo.user.model.Privilege;
 import org.springframework.data.jpa.repository.JpaRepository;
