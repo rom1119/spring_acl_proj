@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, String> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
     @PreAuthorize("hasPermission(returnObject, 'WRITE')")
-    public Optional<User> findById(String id);
+    public Optional<User> findById(Long id);
 
     public User findByEmail(String email);
 

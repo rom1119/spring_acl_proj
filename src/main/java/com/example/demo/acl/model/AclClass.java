@@ -20,6 +20,9 @@ public class AclClass {
     @Column(unique = true, name = "name")
     private String name;
 
+    @Column(name = "class_id_type")
+    private String classIdType;
+
     @OneToMany(mappedBy = "aclClass")
     private Set<AclObjectIdentity> objectIdentities;
 
@@ -57,5 +60,13 @@ public class AclClass {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getClassIdType() {
+        return classIdType;
+    }
+
+    public void setClassIdType(String classIdType) {
+        this.classIdType = classIdType;
     }
 }

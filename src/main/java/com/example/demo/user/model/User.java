@@ -24,13 +24,14 @@ import java.util.Set;
 //@JsonIgnoreProperties({"id", "firstName"})
 //@JsonPropertyOrder({ "name", "id" })
 @Secured("USER_OWNER")
-public class User implements FileInterface {
+public class User implements FileInterface, ResourceInterface {
 
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid")
+//    @GeneratedValue(generator = "uuid")
+//    @GenericGenerator(name = "uuid", strategy = "uuid")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "id", unique = true)
-    private String id;
+    private Long id;
 
     @Version
     private Long version;
@@ -72,14 +73,14 @@ public class User implements FileInterface {
         setRoles(new HashSet<Role>());
     }
 
-    public String getId() {
+    @Override
+    public Long getId() {
         return id;
     }
-
-    public void setId(String id) {
+    @Override
+    public void setId(Long id) {
         this.id = id;
     }
-
 
     public Long getVersion() {
         return version;

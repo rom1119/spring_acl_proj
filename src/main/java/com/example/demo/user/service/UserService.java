@@ -11,6 +11,7 @@ import com.example.demo.user.repository.RoleRepository;
 import com.example.demo.user.repository.UserDetailsRepository;
 import com.example.demo.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.acls.domain.ObjectIdentityImpl;
 import org.springframework.security.acls.model.Acl;
 import org.springframework.security.acls.model.MutableAclService;
@@ -18,6 +19,7 @@ import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -25,6 +27,7 @@ import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
 
+@Service
 public class UserService implements IUserService {
 
     @Autowired
@@ -97,18 +100,23 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User findByIdToEdit(String id) {
+    public User findByIdToView(Long id) {
         return userRepository.findById(id).get();
     }
 
     @Override
-    public User findByIdToDelete(String id) {
+    public User findByIdToEdit(Long id) {
+        return userRepository.findById(id).get();
+    }
+
+    @Override
+    public User findByIdToDelete(Long id) {
         return userRepository.findById(id).get();
     }
 
     @Override
     public boolean canDelete(User user) {
-        return true;
+        return aclService.isGranted(new ObjectIdentityImpl(user), authentication, CustomPermission.DELETE);
     }
 
     @Override
@@ -132,5 +140,11 @@ public class UserService implements IUserService {
         return false;
     }
 
-    
+    public Authentication getAuthentication() {
+        return authentication;
+    }
+
+    public void setAuthentication(Authentication authentication) {
+        this.authentication = authentication;
+    }
 }

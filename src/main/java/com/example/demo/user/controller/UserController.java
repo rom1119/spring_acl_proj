@@ -7,22 +7,28 @@ import com.example.demo.user.model.UserDto;
 import com.example.demo.user.repository.RoleRepository;
 import com.example.demo.user.repository.UserRepository;
 import com.example.demo.main.service.StorageManager;
+import com.example.demo.user.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.annotation.PreDestroy;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
 @Controller
+//@Scope(WebApplicationContext.SCOPE_SESSION)
 @RequestMapping(path=UserController.mainPath)
 public class UserController {
 
@@ -40,29 +46,39 @@ public class UserController {
     @Autowired
     private StorageManager storageService;
 
+    private UserService userService;
+
 
     @Autowired
-    public UserController(ModelMapper modelMapper) {
+    public UserController(ModelMapper modelMapper, UserService userService) {
         this.modelMapper = modelMapper;
         this.modelMapper.getConfiguration().setAmbiguityIgnored(true);
 
+        this.userService = userService;
+
+    }
+
+    @PreDestroy
+    public void preDestroy()
+    {
+       System.out.println("preDestroy Usercontroller");
+       System.out.println(userService.getAuthentication().getAuthorities());
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public String getAll( Model model)
     {
-        List<User> users = userRepository.findAll();
+        List<User> users = userService.findAll();
         model.addAttribute("entities", users);
         return pathToView("list");
 
     }
 
 
-    @PreAuthorize("hasPermission(#user, 'READ')")
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getOne(@PathVariable String id, Model model)
+    public String getOne(@PathVariable Long id, Model model)
     {
-        User user = userRepository.findById(id).get();
+        User user = userService.findByIdToView(id);
         if (user == null) {
             throw new ResourceNotFoundException("Nie znaleziono strony");
         }
@@ -104,7 +120,7 @@ public class UserController {
     }
 
     @RequestMapping(path = "/{id}/edit", method = RequestMethod.GET)
-    public String editView(@Param("id") @PathVariable String id, Model model)
+    public String editView(@Param("id") @PathVariable Long id, Model model)
     {
         User user = userRepository.findById(id).get();
         if (user == null) {
@@ -157,7 +173,7 @@ public class UserController {
 
     @PreAuthorize("hasPermission(#user, 'DELETE')")
     @RequestMapping(path = "/{id}/delete", method = RequestMethod.GET)
-    public String delete(@PathVariable String id, RedirectAttributes attributes) throws IOException {
+    public String delete(@PathVariable Long id, RedirectAttributes attributes) throws IOException {
         User user = userRepository.findById(id).get();
         if (user == null) {
             throw new ResourceNotFoundException("Nie znaleziono strony");

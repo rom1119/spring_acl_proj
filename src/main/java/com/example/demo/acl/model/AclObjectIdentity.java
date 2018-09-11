@@ -1,5 +1,7 @@
 package com.example.demo.acl.model;
 
+import org.springframework.stereotype.Component;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -104,4 +106,5 @@ public class AclObjectIdentity {
     public void setEntries(Set<AclEntry> entries) {
         this.entries = entries;
     }
+
 }

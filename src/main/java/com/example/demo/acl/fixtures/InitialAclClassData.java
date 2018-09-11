@@ -27,12 +27,14 @@ public class InitialAclClassData implements FixturesInterface {
         AclClass aclClass = new AclClass();
         aclClass.setClassField(Book.class.getName());
         aclClass.setName(Book.class.getName());
+        aclClass.setClassIdType("java.lang.Long");
 
         aclClassRepository.save(aclClass);
 
         AclClass aclClassu = new AclClass();
         aclClassu.setClassField(User.class.getName());
         aclClassu.setName(User.class.getName());
+        aclClassu.setClassIdType("java.lang.String");
 
         aclClassRepository.save(aclClassu);
     }

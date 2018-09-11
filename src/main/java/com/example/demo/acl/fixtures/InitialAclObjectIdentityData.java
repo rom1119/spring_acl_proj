@@ -83,6 +83,7 @@ public class InitialAclObjectIdentityData {
         AclObjectIdentity aclObjectIdentity = new AclObjectIdentity();
         aclObjectIdentity.setEntriesInheriting(true);
 
+
         Optional<AclSecurityID> sid = aclSecurityIDRepository.findById((long) 1);
 
         aclObjectIdentity.setOwner(sid.get());

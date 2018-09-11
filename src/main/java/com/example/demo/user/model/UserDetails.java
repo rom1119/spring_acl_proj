@@ -7,13 +7,14 @@ import javax.persistence.*;
 
 @Entity
 @Table( name = "user_details" )
-public class UserDetails {
+public class UserDetails implements ResourceInterface {
 
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid")
+//    @GeneratedValue(generator = "uuid")
+//    @GenericGenerator(name = "uuid", strategy = "uuid")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "id", unique = true)
-    public String id;
+    private Long id;
 
     @OneToOne( fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -22,11 +23,11 @@ public class UserDetails {
     @Column
     private int score;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

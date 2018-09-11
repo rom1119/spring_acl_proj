@@ -41,14 +41,14 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
 
         if (permission.equals("OWNER") ) {
             if (entity.toLowerCase().equals("user")) {
-                User user = userRepository.findById((String) serializable).get();
-
-                if (user == null) {
-                    return true;
-                }
-                CustomUserDetails customUserDetails = new CustomUserDetails(user);
-
-                return customUserDetails.equals(authentication.getPrincipal());
+//                User user = userRepository.findById((String) serializable).get();
+//
+//                if (user == null) {
+//                    return true;
+//                }
+//                CustomUserDetails customUserDetails = new CustomUserDetails(user);
+//
+//                return customUserDetails.equals(authentication.getPrincipal());
             }
 
             return false;
