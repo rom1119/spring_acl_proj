@@ -16,6 +16,8 @@ public interface IUserService {
     User registerNewUserAccount(UserDto accountDto)
             throws EmailExistsException;
 
+    User changePassword(UserDto accountDto);
+
     User updateUser(UserDto accountDto) throws Exception;
 
     @PostFilter("hasPermission(filterObject, 'READ') or hasRole('SUPER_ADMIN')")
@@ -29,6 +31,9 @@ public interface IUserService {
 
     @PostAuthorize("hasPermission(returnObject, 'DELETE')")
     public User findByIdToDelete(Long id);
+
+    @PostAuthorize("hasPermission(returnObject, 'ADMINISTRATION')")
+    public User findByIdToChangePassword(Long id);
 
     @PreAuthorize("hasPermission(#entity, 'DELETE')")
     public boolean canDelete(@Param("entity") User user);

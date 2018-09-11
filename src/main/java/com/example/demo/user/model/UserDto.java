@@ -2,6 +2,8 @@ package com.example.demo.user.model;
 
 import com.example.demo.main.validation.FieldMatch;
 import com.example.demo.main.validation.Image;
+import com.example.demo.main.validation.ValidOldPassword;
+import com.example.demo.main.validation.group.PasswordChange;
 import com.example.demo.main.validation.group.Registration;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,36 +13,30 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-@FieldMatch(first = "password", second = "confirmPassword", message = "The password fields must match", groups = {Registration.class})
+@FieldMatch(first = "password", second = "confirmPassword", message = "The password fields must match", groups = {Registration.class, PasswordChange.class})
 public class UserDto implements Serializable {
 
-    private String id;
+    private Long id;
 
     private Long version;
 
-    @NotNull
-    @NotEmpty
-    private String firstName;
-
-    @NotNull
-    @NotEmpty
-    private String lastName;
+    @NotNull(groups = {PasswordChange.class})
+    @NotEmpty(groups = {PasswordChange.class})
+    @ValidOldPassword(groups = {PasswordChange.class})
+    private String oldPassword;
 
     @NotNull(groups = {Registration.class})
     @NotEmpty(groups = {Registration.class})
     private String password;
 
-    @NotNull(groups = {Registration.class})
-    @NotEmpty(groups = {Registration.class})
+    @NotNull(groups = {Registration.class, PasswordChange.class})
+    @NotEmpty(groups = {Registration.class, PasswordChange.class})
     private String confirmPassword;
 
     @NotNull(groups = {Registration.class})
     @NotEmpty(groups = {Registration.class})
     private String email;
 //    @Email
-
-    @Image(maxHeight = 1000, maxWidth = 1000)
-    private MultipartFile file;
 
 //    private String fileName;
 
@@ -55,29 +51,20 @@ public class UserDto implements Serializable {
         setRoles(new HashSet<Role>());
     }
 
-
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getOldPassword() {
+        return oldPassword;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
     }
 
     public String getPassword() {
@@ -135,15 +122,5 @@ public class UserDto implements Serializable {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
-
-    public MultipartFile getFile() {
-        return file;
-    }
-
-    public void setFile(MultipartFile file) {
-        this.file = file;
-    }
-
-
 
 }

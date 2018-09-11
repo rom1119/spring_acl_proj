@@ -45,12 +45,6 @@ public class SecurityController {
         ModelAndView modelAndView = new ModelAndView("register");
         modelAndView.addObject("user", userDto);
         modelAndView.addObject("userr", "ghgw");
-        try {
-            throw new RuntimeException();
-
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-        }
 
         return modelAndView;
     }
@@ -66,7 +60,7 @@ public class SecurityController {
 //        System.out.println(result.hasErrors());
 
         result.getAllErrors().stream().forEach(e -> {
-            System.out.println(e.toString());
+//            System.out.println(e.toString());
 
         });
 

@@ -11,6 +11,7 @@
 <section layout:fragment="content" class="container">
     <h3 th:if="${remove}" th:text="|Użytkownik '${name}' został usunięty|">Usunięto użytkowniaka</h3>
     <h3 th:if="${save}" th:text="|Użytkownik '${name}' został zapisany|">Zapisano użytkowniaka</h3>
+    <h3 th:if="${passwordChanges}" th:text="|Hasło zostało zmienione dla użytkownika '${name}'|">Zapisano użytkowniaka</h3>
     <table class="table">
         <caption>List of users</caption>
         <thead>
@@ -29,15 +30,16 @@
         <tr th:each="entity,iter : ${entities}" th:object="${entity}">
             <th scope="row" th:text="${iter.index + 1}">1</th>
             <td th:text="*{id}">rte43e6s5yrdtuyg</td>
-            <td><img width="50px" height="50px" th:src="${@pathFileManager.getResourceFilePath(entity)}" /></td>
-            <td th:text="*{firstName}">Jan</td>
-            <td th:text="*{lastName}">Kowalski</td>
+            <td><img width="50px" height="50px" th:src="${@pathFileManager.getResourceFilePath(entity.userDetails)}" /></td>
+            <td th:text="*{userDetails.firstName}">Jan</td>
+            <td th:text="*{userDetails.lastName}">Kowalski</td>
             <td th:text="*{email}">kowalski@wp.pl</td>
             <td ><p th:each="role : *{roles}" th:text="|${#strings.toLowerCase(role.name)} ,|">ROLE_USER,ROLE_ADMIN</p></td>
             <td>
                 <a th:href="@{/user/{id}(id=*{id})}" class="btn btn-outline-success btn-sm">Zobacz szczegóły</a>
                 <a th:href="@{/user/{id}/edit(id=*{id})}" class="btn btn-outline-success btn-sm">Edytuj</a>
-                <a th:href="@{/user/{id}/delete(id=*{id})}" sec:authorize="hasPermission(#vars.entity,'OWNER')" class="btn btn-outline-danger btn-sm">Usuń</a>
+                <a th:href="@{/user/{id}/change_password(id=*{id})}" class="btn btn-outline-success btn-sm">Zmień hasło</a>
+                <a th:href="@{/user/{id}/delete(id=*{id})}"  class="btn btn-outline-danger btn-sm">Usuń</a>
 
             </td>
         </tr>

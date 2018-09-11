@@ -26,6 +26,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService implements IUserService {
@@ -72,8 +73,8 @@ public class UserService implements IUserService {
 //        entityManager = emf.createEntityManager();
 
         User user = new User();
-        user.setFirstName(accountDto.getFirstName());
-        user.setLastName(accountDto.getLastName());
+        user.getUserDetails().setFirstName(accountDto.getUserDetails().getFirstName());
+        user.getUserDetails().setLastName(accountDto.getUserDetails().getLastName());
         user.setPassword(passwordEncoder().encode(accountDto.getPassword()));
         user.setEmail(accountDto.getEmail());
         user.addRole(roleRepository.findByName("ROLE_USER"));
@@ -87,6 +88,17 @@ public class UserService implements IUserService {
         userRepository.save(user);
 
         return user;
+    }
+
+    @Override
+    public User changePassword(UserDto accountDto) {
+
+        User user = userRepository.findById(accountDto.getId()).get();
+        user.setPassword(passwordEncoder().encode(accountDto.getPassword()));
+
+        userRepository.save(user);
+
+        return null;
     }
 
     @Override
@@ -111,6 +123,11 @@ public class UserService implements IUserService {
 
     @Override
     public User findByIdToDelete(Long id) {
+        return userRepository.findById(id).get();
+    }
+
+    @Override
+    public User findByIdToChangePassword(Long id) {
         return userRepository.findById(id).get();
     }
 

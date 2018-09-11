@@ -33,7 +33,7 @@ public class UserOwnerVoter implements AccessDecisionVoter<Object> {
         if (o instanceof User) {
             System.out.println("vote123456u7yiy765432");
             User a = (User) o;
-            System.out.println(a.getFirstName());
+            System.out.println(a);
 
         }
 

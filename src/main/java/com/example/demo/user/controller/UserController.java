@@ -1,5 +1,6 @@
 package com.example.demo.user.controller;
 
+import com.example.demo.main.validation.group.PasswordChange;
 import com.example.demo.user.exception.ResourceNotFoundException;
 import com.example.demo.user.model.Role;
 import com.example.demo.user.model.User;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -28,7 +30,6 @@ import java.io.IOException;
 import java.util.List;
 
 @Controller
-//@Scope(WebApplicationContext.SCOPE_SESSION)
 @RequestMapping(path=UserController.mainPath)
 public class UserController {
 
@@ -56,13 +57,6 @@ public class UserController {
 
         this.userService = userService;
 
-    }
-
-    @PreDestroy
-    public void preDestroy()
-    {
-       System.out.println("preDestroy Usercontroller");
-       System.out.println(userService.getAuthentication().getAuthorities());
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -110,9 +104,9 @@ public class UserController {
 
         User user = modelMapper.map(entity, User.class);
         User userDb = userRepository.findById(user.getId()).get();
-        user.setFileName(userDb.getFileName());
+        user.getUserDetails().setFileName(userDb.getUserDetails().getFileName());
 
-        storageService.updateFile(user);
+        storageService.updateFile(user.getUserDetails());
         userRepository.save(user);
         redirectAttributes.addFlashAttribute("save", true);
         redirectAttributes.addFlashAttribute("userEmail", user.getEmail());
@@ -144,9 +138,6 @@ public class UserController {
                        RedirectAttributes attributes) throws IOException {
         if (result.hasErrors()) {
             model.addAttribute("user", userDto);
-            for(ObjectError error : result.getAllErrors()){
-//                System.out.println(error.toString() + ": " + error.getDefaultMessage());
-            }
             return pathToView("edit");
         }
 
@@ -157,9 +148,9 @@ public class UserController {
             throw new ResourceNotFoundException("Nie znaleziono strony");
         }
 
-        user.setFileName(userDb.getFileName());
+        user.getUserDetails().setFileName(userDb.getUserDetails().getFileName());
 
-        storageService.updateFile(user);
+        storageService.updateFile(user.getUserDetails());
         userRepository.save(user);
 
 //        System.out.println(user.getId());
@@ -174,16 +165,58 @@ public class UserController {
     @PreAuthorize("hasPermission(#user, 'DELETE')")
     @RequestMapping(path = "/{id}/delete", method = RequestMethod.GET)
     public String delete(@PathVariable Long id, RedirectAttributes attributes) throws IOException {
-        User user = userRepository.findById(id).get();
+        User user = userService.findByIdToDelete(id);
         if (user == null) {
             throw new ResourceNotFoundException("Nie znaleziono strony");
         }
-        storageService.deleteFile(user);
+        storageService.deleteFile(user.getUserDetails());
         userRepository.delete(user);
 
 
         attributes.addFlashAttribute("remove", true);
         attributes.addFlashAttribute("userEmail", user.getEmail());
+        return redirectToIndex();
+    }
+
+    @RequestMapping(path = "/{id}/change_password", method = RequestMethod.GET)
+    public String changePasswordView(@PathVariable final Long id, Model model)
+    {
+        User user = userService.findByIdToChangePassword(id);
+        if (user == null) {
+            throw new ResourceNotFoundException("Nie znaleziono strony");
+        }
+
+        UserDto userDto = new UserDto();
+        userDto.setId(user.getId());
+        userDto.setVersion(user.getVersion());
+
+        model.addAttribute("entity", userDto);
+
+        return pathToView("changePassword");
+    }
+
+    @RequestMapping(path = "/change_password", method = RequestMethod.POST)
+    public String changePasswordProccess(@Validated(PasswordChange.class) @ModelAttribute final UserDto userDto,
+                                         BindingResult result,
+                                         RedirectAttributes attributes,
+                                         Model model)
+    {
+        User user = userRepository.findById(userDto.getId()).get();
+        if (user == null) {
+            throw new ResourceNotFoundException("Nie znaleziono strony");
+
+        }
+
+        if (result.hasErrors()) {
+            model.addAttribute("entity", userDto);
+            return pathToView("changePassword");
+        }
+
+        userService.changePassword(userDto);
+
+        attributes.addAttribute("passwordChanges", true);
+        attributes.addAttribute("name", user.getEmail());
+
         return redirectToIndex();
     }
 

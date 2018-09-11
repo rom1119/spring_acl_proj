@@ -20,11 +20,11 @@ import java.util.Set;
 @EntityListeners(UserEntityListener.class)
 //@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonDeserialize()
-@NamedQuery(name="User.findAllWhereIsAsdInFirstName", query="SELECT u from User u where u.firstName LIKE '%asd%'")
+@NamedQuery(name="User.findAllWhereIsAsdInFirstName", query="SELECT u from User u left join u.userDetails ud where ud.firstName LIKE '%asd%'")
 //@JsonIgnoreProperties({"id", "firstName"})
 //@JsonPropertyOrder({ "name", "id" })
 @Secured("USER_OWNER")
-public class User implements FileInterface, ResourceInterface {
+public class User implements ResourceInterface {
 
     @Id
 //    @GeneratedValue(generator = "uuid")
@@ -36,18 +36,8 @@ public class User implements FileInterface, ResourceInterface {
     @Version
     private Long version;
 
-    private String firstName;
-
-    private String lastName;
-
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
-
-    @Column(name = "file_name")
-    private String fileName;
-
-    @Transient
-    private MultipartFile file;
 
     private String email;
 
@@ -88,32 +78,6 @@ public class User implements FileInterface, ResourceInterface {
 
     public void setVersion(Long version) {
         this.version = version;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
     }
 
     @JsonIgnore()
@@ -188,16 +152,5 @@ public class User implements FileInterface, ResourceInterface {
         this.userDetails = userDetails;
         userDetails.setUser(this);
     }
-
-    @Override
-    public void setFile(MultipartFile file) {
-        this.file = file;
-    }
-
-    @Override
-    public MultipartFile getFile() {
-        return file;
-    }
-
 
 }

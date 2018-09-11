@@ -94,8 +94,6 @@ public class InitialUserData implements FixturesInterface {
 //        rolesForAdmin.add(userRole);
 
         User sadmin = new User();
-        sadmin.setFirstName("super_admin");
-        sadmin.setLastName("super_admin");
         sadmin.setPassword(passwordEncoder().encode("test"));
         sadmin.setEmail("sadm");
         sadmin.addRole(superAdminRole);
@@ -105,14 +103,14 @@ public class InitialUserData implements FixturesInterface {
 
         UserDetails userDetailsSuperAdmin = new UserDetails();
         userDetailsSuperAdmin.setScore(0);
+        userDetailsSuperAdmin.setFirstName("super_admin");
+        userDetailsSuperAdmin.setLastName("super_admin");
 
         sadmin.setUserDetails(userDetailsSuperAdmin);
         userRepository.save(sadmin);
 
 
         User admin = new User();
-        admin.setFirstName("admin");
-        admin.setLastName("admin");
         admin.setPassword(passwordEncoder().encode("test"));
         admin.setEmail("adm");
         admin.addRole(adminRole);
@@ -121,21 +119,23 @@ public class InitialUserData implements FixturesInterface {
 
         UserDetails userDetailsAdmin = new UserDetails();
         userDetailsAdmin.setScore(0);
+        userDetailsAdmin.setFirstName("admin");
+        userDetailsAdmin.setLastName("admin");
 
         admin.setUserDetails(userDetailsAdmin);
 
         userRepository.save(admin);
 
         User user = new User();
-        user.setFirstName("user");
-        user.setLastName("user");
         user.setPassword(passwordEncoder().encode("test"));
         user.setEmail("use");
         user.addRole(userRole);
         user.setEnabled(true);
 
         UserDetails userDetailsUsr = new UserDetails();
-        userDetailsAdmin.setScore(0);
+        userDetailsUsr.setScore(0);
+        userDetailsUsr.setFirstName("user");
+        userDetailsUsr.setLastName("user");
 
         user.setUserDetails(userDetailsUsr);
 
@@ -155,8 +155,6 @@ public class InitialUserData implements FixturesInterface {
     private void createAdmin(Role role, int i)
     {
         User admin = new User();
-        admin.setFirstName("admin" + i);
-        admin.setLastName("admin" + i);
         admin.setPassword(passwordEncoder().encode("test"));
         admin.setEmail("adm" + i);
         admin.addRole(role);
@@ -164,6 +162,8 @@ public class InitialUserData implements FixturesInterface {
 
         UserDetails userDetailsAdmin = new UserDetails();
         userDetailsAdmin.setScore(0);
+        userDetailsAdmin.setFirstName("admin" + i);
+        userDetailsAdmin.setLastName("admin" + i);
 
         admin.setUserDetails(userDetailsAdmin);
 
@@ -176,8 +176,6 @@ public class InitialUserData implements FixturesInterface {
     private void createUser(Role role, int i)
     {
         User user = new User();
-        user.setFirstName("user" + i);
-        user.setLastName("user" + i);
         user.setPassword(passwordEncoder().encode("test"));
         user.setEmail("use" + i);
         user.addRole(role);
@@ -185,6 +183,8 @@ public class InitialUserData implements FixturesInterface {
 
         UserDetails userDetails = new UserDetails();
         userDetails.setScore(0);
+        userDetails.setFirstName("user" + i);
+        userDetails.setLastName("user" + i);
 
         user.setUserDetails(userDetails);
 

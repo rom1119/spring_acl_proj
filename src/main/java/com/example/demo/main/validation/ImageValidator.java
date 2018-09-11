@@ -40,6 +40,10 @@ public class ImageValidator implements ConstraintValidator<Image, Object>
         boolean toReturn = false;
         MultipartFile multipartFile = (MultipartFile) value;
 
+        if (multipartFile == null) {
+            return true;
+        }
+
         if (multipartFile.isEmpty()) {
             return true;
         }
