@@ -23,6 +23,8 @@ import javax.sql.DataSource;
 @Configuration
 public class AclConfig {
 
+    public static final Class<CustomPermission> permissionClass = CustomPermission.class;
+
     @Autowired
     private DataSource dataSource;
 

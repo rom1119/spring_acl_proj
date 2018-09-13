@@ -1,5 +1,7 @@
 package com.example.demo.acl.model;
 
+import com.example.demo.acl.validation.ValidPermission;
+
 import javax.persistence.*;
 
 @Entity
@@ -22,6 +24,7 @@ public class AclEntry {
     @JoinColumn(name="sid", nullable=false)
     private AclSecurityID securityID;
 
+    @ValidPermission
     @Column(name = "mask")
     private int mask;
 

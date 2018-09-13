@@ -54,7 +54,7 @@ public class CustomMethodSecurityExpressionRoot extends SecurityExpressionRoot i
 
     private boolean checkUser(Object o)
     {
-        System.out.println(o);
+//        System.out.println(o);
         User user;
         if (o instanceof User) {
             user = (User) o;

@@ -1,5 +1,6 @@
 package com.example.demo.acl.service;
 
+import com.example.demo.acl.config.AclConfig;
 import com.example.demo.acl.config.CustomPermission;
 import com.example.demo.acl.config.CustomUserDetails;
 import com.example.demo.acl.model.AclSecurityID;
@@ -20,10 +21,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.*;
 
 @Component
 @Order(1)
@@ -34,6 +34,21 @@ public class CustomAclService {
     @Autowired
     public CustomAclService(MutableAclService aclService) {
         this.aclService = aclService;
+    }
+
+    public List<AccessControlEntry> getAclEntries(Class c, Serializable id)
+    {
+        ObjectIdentity oi = new ObjectIdentityImpl(c, id);
+
+// Create or update the relevant ACL
+        MutableAcl acl = null;
+        try {
+            acl = (MutableAcl) aclService.readAclById(oi);
+        } catch (NotFoundException nfe) {
+            acl = aclService.createAcl(oi);
+        }
+
+        return acl.getEntries();
     }
 
     public MutableAcl createAcl(Class c, Serializable id)
@@ -49,7 +64,6 @@ public class CustomAclService {
         } catch (NotFoundException nfe) {
             acl = aclService.createAcl(oi);
         }
-
 // Now grant some permissions via an access control entry (ACE)
 //            acl.insertAce(acl.getEntries().size(), p, sid, true);
         aclService.updateAcl(acl);
@@ -77,6 +91,32 @@ public class CustomAclService {
         aclService.updateAcl(acl);
 
         return acl;
+    }
+
+    public Map<String, Permission> getAvailablePermission() throws IllegalAccessException {
+        Map<String, Permission> permissionList = new HashMap<>();
+        Class permisionClass = AclConfig.permissionClass;
+
+        while(permisionClass.getSuperclass() != null) {
+            Field[] fields = permisionClass.getDeclaredFields();
+            for (Field f : fields) {
+                if (Modifier.isStatic(f.getModifiers())) {
+                    permissionList.put(f.getName(), (Permission) f.get((Object) f.getName()));
+//                    System.out.println(f.getName());
+//                    System.out.println();
+                }
+            }
+            permisionClass = permisionClass.getSuperclass();
+        }
+
+
+        permissionList.forEach((String el, Permission e) -> {
+            System.out.println(e.getMask());
+
+        });
+
+
+        return permissionList;
     }
 
     private PrincipalSid createUserSid(User user)
@@ -113,4 +153,5 @@ public class CustomAclService {
 
         return sids;
     }
+
 }

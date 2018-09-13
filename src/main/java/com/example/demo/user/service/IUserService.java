@@ -26,7 +26,7 @@ public interface IUserService {
     @PostAuthorize("hasPermission(returnObject, 'READ') or hasRole('SUPER_ADMIN')")
     User findByIdToView(Long id);
 
-    @PostAuthorize("hasPermission(returnObject, 'WRITE')")
+    @PostAuthorize("hasPermission(returnObject, 'WRITE') or isOwner(filterObject)")
     public User findByIdToEdit(Long id);
 
     @PostAuthorize("hasPermission(returnObject, 'DELETE')")

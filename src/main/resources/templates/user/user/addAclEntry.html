@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:td="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{Layout.html}"><head>
+</head>
+<body>
+
+<section layout:fragment="content" class="container">
+
+    <h1 th:text="#{registerForm.title}">form</h1>
+    <form th:action="@{/user/acl_entry/new}" th:object="${entity}" method="POST" enctype="multipart/form-data">
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="securityID" th:text="#{aclEntry.label.securityID}">role</label>
+                <select th:field="*{securityID}" id="securityID">
+                    <option th:each="el : ${securityIDList}" th:text="${el.sid}" th:value="${el.id}">
+                        ROLE_ADMIN
+                    </option>
+                </select>
+                <div class="invalid-feedback"
+                     th:each="error: ${#fields.errors('securityID')}"
+                     th:text="${error}">
+                    Invalid value
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="unitSecurity" th:text="#{aclEntry.label.unitSecurity}">role</label>
+                <select th:field="*{mask}" id="unitSecurity">
+                    <option th:each="el : ${availablePermission}" th:text="${el.key}" th:value="${el.value.mask}">
+                        ROLE_ADMIN
+                    </option>
+                </select>
+                <div class="invalid-feedback"
+                     th:each="error: ${#fields.errors('mask')}"
+                     th:text="${error}">
+                    Invalid value
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="aceOrder" th:text="#{aclEntry.label.aceOrder}">password</label>
+                <input type="text" th:field="*{aceOrder}" th:value="|''|" class="form-control" th:classappend="${#fields.hasErrors('aceOrder')} ? 'is-invalid' : ''" id="aceOrder" >
+                <div class="invalid-feedback"
+                     th:each="error: ${#fields.errors('aceOrder')}"
+                     th:text="${error}">
+                    Please provide a valid password.
+                </div>
+            </div>
+        </div>
+
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="grantingYes" th:text="#{aclEntry.label.granting}">password</label>
+                <input type="radio" th:field="*{granting}" th:value="0" class="form-control" th:classappend="${#fields.hasErrors('granting')} ? 'is-invalid' : ''" id="grantingYes" >
+                <label for="grantingNo" th:text="#{aclEntry.label.granting}">password</label>
+                <input type="radio" th:field="*{granting}" th:value="1" class="form-control" th:classappend="${#fields.hasErrors('granting')} ? 'is-invalid' : ''" id="grantingNo" >
+                <div class="invalid-feedback"
+                     th:each="error: ${#fields.errors('granting')}"
+                     th:text="${error}">
+                    Please provide a valid password.
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="auditSuccessYes" th:text="#{aclEntry.label.auditSuccess}">password</label>
+                <input type="radio" th:field="*{auditSuccess}" th:value="0" class="form-control" th:classappend="${#fields.hasErrors('auditSuccess')} ? 'is-invalid' : ''" id="auditSuccessYes" >
+                <label for="auditSuccessNo" th:text="#{aclEntry.label.granting}">password</label>
+                <input type="radio" th:field="*{auditSuccess}" th:value="1" class="form-control" th:classappend="${#fields.hasErrors('auditSuccess')} ? 'is-invalid' : ''" id="auditSuccessNo" >
+                <div class="invalid-feedback"
+                     th:each="error: ${#fields.errors('auditSuccess')}"
+                     th:text="${error}">
+                    Please provide a valid password.
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="auditFailureYes" th:text="#{aclEntry.label.auditFailure}">password</label>
+                <input type="radio" th:field="*{auditFailure}" th:value="0" class="form-control" th:classappend="${#fields.hasErrors('auditFailure')} ? 'is-invalid' : ''" id="auditFailureYes" >
+                <label for="auditFailureNo" th:text="#{aclEntry.label.auditFailure}">password</label>
+                <input type="radio" th:field="*{auditFailure}" th:value="1" class="form-control" th:classappend="${#fields.hasErrors('auditFailure')} ? 'is-invalid' : ''" id="auditFailureNo" >
+                <div class="invalid-feedback"
+                     th:each="error: ${#fields.errors('auditFailure')}"
+                     th:text="${error}">
+                    Please provide a valid password.
+                </div>
+            </div>
+        </div>
+
+
+        <button type="submit" th:text="#{editForm.title}" class="btn btn-primary">Sign in</button>
+    </form>
+
+</section>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<table class="table" th:fragment="aclList (entities)" xmlns:th="http://www.w3.org/1999/xhtml">
+    <caption>List zabezpieczonych typow</caption>
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">ID</th>
+        <th scope="col">Identyfikator zabezpieczający</th>
+        <th scope="col">Rodzaj dostępu</th>
+        <th scope="col">Dostęp przydzielony</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="entity,iter : ${entities}" th:object="${entity}">
+        <th scope="row" th:text="${iter.index + 1}">1</th>
+        <td th:text="*{id}">1</td>
+        <td th:text="*{securityID.sid}">User</td>
+        <td th:if="*{granting}" th:text="|TAK|">TAK</td>
+        <td th:unless="*{granting}" th:text="|NIE|">NIE</td>
+        <!--<td>-->
+        <!--<a th:href="@{/book/{id}(id=*{id})}" class="btn btn-outline-success btn-sm">Zobacz szczegóły</a>-->
+        <!--<a th:href="@{/book/{id}/edit(id=*{id})}" class="btn btn-outline-success btn-sm">Edytuj</a>-->
+        <!--&lt;!&ndash;<a th:href="@{/user/{id}/delete(id=*{id})}" sec:authorize="hasPermission(#vars.entity,'OWNER')" class="btn btn-outline-danger btn-sm">Usuń</a>&ndash;&gt;-->
+
+        <!--</td>-->
+    </tr>
+    </tbody>
+</table>
