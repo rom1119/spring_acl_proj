@@ -1,11 +1,9 @@
 package com.example.demo.user.model;
 
 import com.example.demo.main.validation.FieldMatch;
-import com.example.demo.main.validation.Image;
-import com.example.demo.main.validation.ValidOldPassword;
+import com.example.demo.main.validation.ValidChangePassword;
 import com.example.demo.main.validation.group.PasswordChange;
 import com.example.demo.main.validation.group.Registration;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -14,6 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @FieldMatch(first = "password", second = "confirmPassword", message = "The password fields must match", groups = {Registration.class, PasswordChange.class})
+@ValidChangePassword(oldPasswordField = "oldPassword", passwordField = "password", confirmPasswordField = "confirmPassword", groups = {PasswordChange.class})
 public class UserDto implements Serializable {
 
     private Long id;
@@ -22,7 +21,6 @@ public class UserDto implements Serializable {
 
     @NotNull(groups = {PasswordChange.class})
     @NotEmpty(groups = {PasswordChange.class})
-    @ValidOldPassword(groups = {PasswordChange.class})
     private String oldPassword;
 
     @NotNull(groups = {Registration.class})

@@ -7,10 +7,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
-//@Component
+@Component
 public class CustomPermissionEvaluator implements PermissionEvaluator {
 
     private UserRepository userRepository;
@@ -41,14 +42,14 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
 
         if (permission.equals("OWNER") ) {
             if (entity.toLowerCase().equals("user")) {
-//                User user = userRepository.findById((String) serializable).get();
-//
-//                if (user == null) {
-//                    return true;
-//                }
-//                CustomUserDetails customUserDetails = new CustomUserDetails(user);
-//
-//                return customUserDetails.equals(authentication.getPrincipal());
+                User user = userRepository.findById((Long) serializable).get();
+
+                if (user == null) {
+                    return true;
+                }
+                CustomUserDetails customUserDetails = new CustomUserDetails(user);
+
+                return customUserDetails.equals(authentication.getPrincipal());
             }
 
             return false;

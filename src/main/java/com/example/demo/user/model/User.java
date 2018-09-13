@@ -1,14 +1,13 @@
 package com.example.demo.user.model;
 
+import com.example.demo.main.model.ResourceInterface;
 import com.example.demo.user.eventListener.UserEntityListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.util.HashSet;

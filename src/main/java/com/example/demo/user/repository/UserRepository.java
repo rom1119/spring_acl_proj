@@ -11,7 +11,6 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @PreAuthorize("hasPermission(returnObject, 'WRITE')")
     public Optional<User> findById(Long id);
 
     public User findByEmail(String email);

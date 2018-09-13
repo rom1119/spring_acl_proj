@@ -1,5 +1,6 @@
 package com.example.demo.user.controller;
 
+        import com.example.demo.acl.service.CustomAclService;
         import com.example.demo.user.repository.PrivilegeRepository;
         import com.example.demo.user.exception.ResourceNotFoundException;
         import com.example.demo.user.model.Privilege;
@@ -30,6 +31,9 @@ public class PrivilegeController {
 
     @Autowired
     private PrivilegeRepository privilegeRepository;
+
+    @Autowired
+    private CustomAclService aclService;
 
 
     @RequestMapping(method = RequestMethod.GET)
@@ -76,6 +80,7 @@ public class PrivilegeController {
         }
 
         privilegeRepository.save(entity);
+        aclService.createAclWithAuthoritySid(entity.getClass(), entity.getId(), entity);
         redirectAttributes.addFlashAttribute("save", true);
         redirectAttributes.addFlashAttribute("name", entity.getName());
         return redirectToIndex();

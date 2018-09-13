@@ -51,6 +51,9 @@
                 <li class="nav-item active" sec:authorize="not isAuthenticated()">
                     <a class="nav-link" th:href="@{/login}">Zaloguj się <span class="sr-only">(current)</span></a>
                 </li>
+                <li class="nav-item active" sec:authorize="not isAuthenticated()">
+                    <a class="nav-link" th:href="@{/register}">Załóż konto <span class="sr-only">(current)</span></a>
+                </li>
             </ul>
             <div class="bg-dark p-4" sec:authorize="isAuthenticated()">
                 <h3 class="text-white">Zalogowany jako <h3 class="text-white" sec:authentication="name"></h3></h3>

@@ -1,6 +1,9 @@
 package com.example.demo.acl.service;
 
 import com.example.demo.acl.config.CustomPermission;
+import com.example.demo.acl.config.CustomUserDetails;
+import com.example.demo.acl.model.AclSecurityID;
+import com.example.demo.user.model.AuthorityInterface;
 import com.example.demo.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,7 +36,7 @@ public class CustomAclService {
         this.aclService = aclService;
     }
 
-    public void createAcl(Class c, Serializable id)
+    public MutableAcl createAcl(Class c, Serializable id)
     {
         ObjectIdentity oi = new ObjectIdentityImpl(c, id);
 //            Sid sid = new PrincipalSid("sadm");
@@ -50,7 +53,48 @@ public class CustomAclService {
 // Now grant some permissions via an access control entry (ACE)
 //            acl.insertAce(acl.getEntries().size(), p, sid, true);
         aclService.updateAcl(acl);
+
+        return acl;
     }
+
+    public MutableAcl createAclWithUserSid(Class c, Serializable id, User user)
+    {
+        MutableAcl acl = createAcl(c, id);
+        PrincipalSid sid = createUserSid(user);
+        acl.setOwner(sid);
+
+        aclService.updateAcl(acl);
+
+        return acl;
+    }
+
+    public MutableAcl createAclWithAuthoritySid(Class c, Serializable id, AuthorityInterface authority)
+    {
+        MutableAcl acl = createAcl(c, id);
+        GrantedAuthoritySid sid = createAuthoritySid(authority);
+        acl.setOwner(sid);
+
+        aclService.updateAcl(acl);
+
+        return acl;
+    }
+
+    private PrincipalSid createUserSid(User user)
+    {
+        CustomUserDetails customUserDetails = new CustomUserDetails(user);
+        PrincipalSid sid = new PrincipalSid(customUserDetails.getUsername());
+
+        return sid;
+    }
+
+    private GrantedAuthoritySid createAuthoritySid(AuthorityInterface authority)
+    {
+        GrantedAuthoritySid sid = new GrantedAuthoritySid(authority.getName());
+
+        return sid;
+    }
+
+
 
     public boolean isGranted(ObjectIdentity checkedObject, Authentication authentication, Permission permission)
     {

@@ -1,5 +1,6 @@
 package com.example.demo.main.controller;
 
+import com.example.demo.main.validation.group.Registration;
 import com.example.demo.user.exception.EmailExistsException;
 import com.example.demo.user.model.User;
 import com.example.demo.user.model.UserDto;
@@ -13,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
@@ -51,7 +53,7 @@ public class SecurityController {
 
     @RequestMapping(path="/register", method = RequestMethod.POST, produces={"application/json"})
     public ModelAndView registerProcess(
-            @ModelAttribute("user") @Valid UserDto accountDto,
+            @ModelAttribute("user") @Validated(Registration.class) UserDto accountDto,
             BindingResult result,
             WebRequest request,
             Errors errors) {
@@ -60,7 +62,7 @@ public class SecurityController {
 //        System.out.println(result.hasErrors());
 
         result.getAllErrors().stream().forEach(e -> {
-//            System.out.println(e.toString());
+            System.out.println(e.toString());
 
         });
 

@@ -1,8 +1,8 @@
 package com.example.demo.user.model;
 
+import com.example.demo.main.model.ResourceInterface;
 import com.example.demo.main.validation.Image;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;

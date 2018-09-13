@@ -73,19 +73,22 @@ public class UserService implements IUserService {
 //        entityManager = emf.createEntityManager();
 
         User user = new User();
-        user.getUserDetails().setFirstName(accountDto.getUserDetails().getFirstName());
-        user.getUserDetails().setLastName(accountDto.getUserDetails().getLastName());
         user.setPassword(passwordEncoder().encode(accountDto.getPassword()));
         user.setEmail(accountDto.getEmail());
+        user.setEnabled(true);
         user.addRole(roleRepository.findByName("ROLE_USER"));
 
         UserDetails userDetailsAdmin = new UserDetails();
         userDetailsAdmin.setScore(0);
+        userDetailsAdmin.setFirstName(accountDto.getUserDetails().getFirstName());
+        userDetailsAdmin.setLastName(accountDto.getUserDetails().getLastName());;
 
         userDetailsAdmin.setUser(user);
 
         userDetailsRepository.save(userDetailsAdmin);
         userRepository.save(user);
+
+        aclService.createAclWithUserSid(user.getClass(), user.getId(), user);
 
         return user;
     }
@@ -98,7 +101,7 @@ public class UserService implements IUserService {
 
         userRepository.save(user);
 
-        return null;
+        return user;
     }
 
     @Override

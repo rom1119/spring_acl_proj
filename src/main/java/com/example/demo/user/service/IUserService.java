@@ -20,7 +20,7 @@ public interface IUserService {
 
     User updateUser(UserDto accountDto) throws Exception;
 
-    @PostFilter("hasPermission(filterObject, 'READ') or hasRole('SUPER_ADMIN')")
+    @PostFilter("hasPermission(returnObject, 'READ') or isOwner(filterObject)")
     List<User> findAll();
 
     @PostAuthorize("hasPermission(returnObject, 'READ') or hasRole('SUPER_ADMIN')")
@@ -32,7 +32,7 @@ public interface IUserService {
     @PostAuthorize("hasPermission(returnObject, 'DELETE')")
     public User findByIdToDelete(Long id);
 
-    @PostAuthorize("hasPermission(returnObject, 'ADMINISTRATION')")
+    @PostAuthorize("hasPermission(returnObject, 'ADMINISTRATION') or isOwner(#id, 'user')")
     public User findByIdToChangePassword(Long id);
 
     @PreAuthorize("hasPermission(#entity, 'DELETE')")

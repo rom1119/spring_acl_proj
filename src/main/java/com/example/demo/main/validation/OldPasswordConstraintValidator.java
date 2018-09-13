@@ -1,5 +1,8 @@
 package com.example.demo.main.validation;
 
+import com.example.demo.user.model.User;
+import com.example.demo.user.model.UserDto;
+import com.example.demo.user.repository.UserRepository;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -7,33 +10,53 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Optional;
 
-public class OldPasswordConstraintValidator implements ConstraintValidator<ValidOldPassword, Object> {
+public class OldPasswordConstraintValidator implements ConstraintValidator<ValidChangePassword, Object> {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    String name;
-    String canName;
-    String typeName;
+    @Autowired
+    private UserRepository userRepository;
 
-    @Override
-    public void initialize(final ValidOldPassword constraintAnnotation)
+    public static HashMap<String, String> errors = new HashMap<>();
+
+    String oldPasswordField;
+    String passwordField;
+    String confirmPasswordField;
+
+    private void initErrors()
     {
-        name = constraintAnnotation.annotationType().getName();
-        canName = constraintAnnotation.annotationType().getCanonicalName();
-        typeName = constraintAnnotation.annotationType().getTypeName();
-
+        errors.put("oldPass", "Hasło niepoprawne");
+        errors.put("confPass", "Wpisz dwa razy to samo hasło");
     }
 
     @Override
-    public boolean isValid(Object o, ConstraintValidatorContext constraintValidatorContext) {
+    public void initialize(final ValidChangePassword constraintAnnotation)
+    {
+        oldPasswordField = constraintAnnotation.oldPasswordField();
+        passwordField = constraintAnnotation.passwordField();
+        confirmPasswordField = constraintAnnotation.confirmPasswordField();
 
-        String passwordChecked = (String) o;
+        initErrors();
+    }
+
+    @Override
+    public boolean isValid(Object o, ConstraintValidatorContext context) {
+
         String id = null;
+        String oldPass = null;
+        String pass = null;
+        String confPass = null;
 
         try {
             id = BeanUtils.getProperty(o, "id");
+
+             oldPass = BeanUtils.getProperty(o, oldPasswordField);
+             pass = BeanUtils.getProperty(o, passwordField);
+             confPass = BeanUtils.getProperty(o, confirmPasswordField);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
@@ -41,15 +64,22 @@ public class OldPasswordConstraintValidator implements ConstraintValidator<Valid
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
-
+//
         if (id.isEmpty()) {
             return true;
         }
 
-        System.out.println(name);
-        System.out.println(canName);
-        System.out.println(typeName);
+        User user = userRepository.findById(Long.valueOf(id)).get();
 
-        return false;
+        if ( !passwordEncoder.matches(oldPass, user.getPassword())) {
+//                context.disableDefaultConstraintViolation();
+                //In the initialiaze method you get the errorMessage: constraintAnnotation.message();
+                context.buildConstraintViolationWithTemplate(errors.get("oldPass")).addNode(oldPasswordField).addConstraintViolation();
+System.out.println(passwordEncoder.matches(oldPass, user.getPassword()));
+                return false;
+        }
+
+
+        return true;
     }
 }

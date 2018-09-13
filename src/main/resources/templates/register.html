@@ -8,18 +8,18 @@
     <div class="form-row">
         <div class="form-group col-md-6">
             <label for="firstName" th:text="#{registerForm.label.firstName}">firstName</label>
-            <input type="text" th:field="*{firstName}" class="form-control" th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid' : ''" id="firstName" th:placeholder="#{registerForm.label.firstName}">
+            <input type="text" th:field="*{userDetails.firstName}" class="form-control" th:classappend="${#fields.hasErrors('userDetails.firstName')} ? 'is-invalid' : ''" id="firstName" th:placeholder="#{registerForm.label.firstName}">
             <div class="invalid-feedback"
-                 th:each="error: ${#fields.errors('firstName')}"
+                 th:each="error: ${#fields.errors('userDetails.firstName')}"
                  th:text="${error}">
                 Please provide a valid firstName.
             </div>
         </div>
         <div class="form-group col-md-6">
             <label for="lastName" th:text="#{registerForm.label.lastName}">lastName</label>
-            <input type="text" th:field="*{lastName}" class="form-control" th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid' : ''" id="lastName" th:placeholder="#{registerForm.label.lastName}">
+            <input type="text" th:field="*{userDetails.lastName}" class="form-control" th:classappend="${#fields.hasErrors('userDetails.lastName')} ? 'is-invalid' : ''" id="lastName" th:placeholder="#{registerForm.label.lastName}">
             <div class="invalid-feedback"
-                 th:each="error: ${#fields.errors('lastName')}"
+                 th:each="error: ${#fields.errors('userDetails.lastName')}"
                  th:text="${error}">
                 Please provide a valid lastName.
             </div>

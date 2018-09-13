@@ -12,7 +12,7 @@ import java.util.Set;
 
 @Entity
 @Table( name = "role" )
-public class Role implements ResourceInterface {
+public class Role implements AuthorityInterface {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -56,10 +56,12 @@ public class Role implements ResourceInterface {
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }

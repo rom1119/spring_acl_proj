@@ -1,12 +1,10 @@
 package com.example.demo.main.model;
 
-import com.example.demo.user.model.ResourceInterface;
-
 import javax.persistence.*;
 
 @Entity
 @Table(name = "book")
-public class Book implements ResourceInterface {
+public class Book implements ResourceInterface, Nameable {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -39,10 +37,12 @@ public class Book implements ResourceInterface {
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }

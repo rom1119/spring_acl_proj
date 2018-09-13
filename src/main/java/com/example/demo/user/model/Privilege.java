@@ -1,5 +1,6 @@
 package com.example.demo.user.model;
 
+import com.example.demo.main.model.Nameable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -8,7 +9,7 @@ import java.util.Set;
 
 @Entity
 @Table( name = "privilege" )
-public class Privilege implements ResourceInterface {
+public class Privilege implements AuthorityInterface {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -40,10 +41,12 @@ public class Privilege implements ResourceInterface {
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }

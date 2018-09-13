@@ -1,5 +1,6 @@
 package com.example.demo.user.controller;
 
+import com.example.demo.acl.service.CustomAclService;
 import com.example.demo.main.validation.group.PasswordChange;
 import com.example.demo.user.exception.ResourceNotFoundException;
 import com.example.demo.user.model.Role;
@@ -46,6 +47,9 @@ public class UserController {
 
     @Autowired
     private StorageManager storageService;
+
+    @Autowired
+    private CustomAclService aclService;
 
     private UserService userService;
 
@@ -108,6 +112,9 @@ public class UserController {
 
         storageService.updateFile(user.getUserDetails());
         userRepository.save(user);
+
+        aclService.createAclWithUserSid(user.getClass(), user.getId(), user);
+
         redirectAttributes.addFlashAttribute("save", true);
         redirectAttributes.addFlashAttribute("userEmail", user.getEmail());
         return redirectToIndex();
@@ -196,7 +203,7 @@ public class UserController {
     }
 
     @RequestMapping(path = "/change_password", method = RequestMethod.POST)
-    public String changePasswordProccess(@Validated(PasswordChange.class) @ModelAttribute final UserDto userDto,
+    public String changePasswordProccess(@Validated(PasswordChange.class) @ModelAttribute("entity") final UserDto userDto,
                                          BindingResult result,
                                          RedirectAttributes attributes,
                                          Model model)
@@ -206,6 +213,10 @@ public class UserController {
             throw new ResourceNotFoundException("Nie znaleziono strony");
 
         }
+
+        result.getAllErrors().stream().forEach(el -> {
+            System.out.println(el.toString());
+        });
 
         if (result.hasErrors()) {
             model.addAttribute("entity", userDto);
