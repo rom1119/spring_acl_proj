@@ -15,10 +15,10 @@ public class AclMethodSecurityConfiguration extends GlobalMethodSecurityConfigur
     @Autowired
     MethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler;
 
-    @Autowired
-    PermissionEvaluator permissionEvaluator;
+//    @Autowired
+//    PermissionEvaluator permissionEvaluator;
 
-    @Autowired
+//    @Autowired
     private CustomMethodSecurityExpressionHandler customMethodSecurityExpressionHandler;
 
     @Override
@@ -27,8 +27,8 @@ public class AclMethodSecurityConfiguration extends GlobalMethodSecurityConfigur
 //        System.out.println();
 //        CustomMethodSecurityExpressionHandler expressionHandler =
 //                new CustomMethodSecurityExpressionHandler();
-        customMethodSecurityExpressionHandler.setPermissionEvaluator(permissionEvaluator);
-        return customMethodSecurityExpressionHandler;
+//        customMethodSecurityExpressionHandler.setPermissionEvaluator(permissionEvaluator);
+        return defaultMethodSecurityExpressionHandler;
     }
 
 }

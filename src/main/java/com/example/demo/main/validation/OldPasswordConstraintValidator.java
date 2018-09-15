@@ -75,7 +75,6 @@ public class OldPasswordConstraintValidator implements ConstraintValidator<Valid
 //                context.disableDefaultConstraintViolation();
                 //In the initialiaze method you get the errorMessage: constraintAnnotation.message();
                 context.buildConstraintViolationWithTemplate(errors.get("oldPass")).addNode(oldPasswordField).addConstraintViolation();
-System.out.println(passwordEncoder.matches(oldPass, user.getPassword()));
                 return false;
         }
 

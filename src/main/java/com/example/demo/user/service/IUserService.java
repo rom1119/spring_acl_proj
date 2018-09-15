@@ -20,19 +20,19 @@ public interface IUserService {
 
     User updateUser(UserDto accountDto) throws Exception;
 
-    @PostFilter("hasPermission(returnObject, 'READ') or isOwner(filterObject)")
+    @PostFilter("hasPermission(filterObject, 'READ') or isOwner(filterObject)")
     List<User> findAll();
 
     @PostAuthorize("hasPermission(returnObject, 'READ') or hasRole('SUPER_ADMIN')")
     User findByIdToView(Long id);
 
-    @PostAuthorize("hasPermission(returnObject, 'WRITE') or isOwner(filterObject)")
+    @PostAuthorize("hasPermission(returnObject, 'WRITE') ")
     public User findByIdToEdit(Long id);
 
     @PostAuthorize("hasPermission(returnObject, 'DELETE')")
     public User findByIdToDelete(Long id);
 
-    @PostAuthorize("hasPermission(returnObject, 'ADMINISTRATION') or isOwner(#id, 'user')")
+    @PostAuthorize("hasPermission(returnObject, 'ADMINISTRATION') ")
     public User findByIdToChangePassword(Long id);
 
     @PreAuthorize("hasPermission(#entity, 'DELETE')")

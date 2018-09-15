@@ -14,7 +14,8 @@
     <tr th:each="entity,iter : ${entities}" th:object="${entity}">
         <th scope="row" th:text="${iter.index + 1}">1</th>
         <td th:text="*{id}">1</td>
-        <td th:text="*{securityID.sid}">User</td>
+        <td th:text="*{sid}">User</td>
+        <td th:text="${@customAclService.getPermissionName(entity.permission)}">User</td>
         <td th:if="*{granting}" th:text="|TAK|">TAK</td>
         <td th:unless="*{granting}" th:text="|NIE|">NIE</td>
         <!--<td>-->

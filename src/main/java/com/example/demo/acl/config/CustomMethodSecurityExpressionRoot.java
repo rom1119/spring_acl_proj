@@ -21,6 +21,8 @@ public class CustomMethodSecurityExpressionRoot extends SecurityExpressionRoot i
 
     private ModelMapper modelMapper;
     private Object filterObject;
+    private Object returnObject;
+    private Object target;
 
     public CustomMethodSecurityExpressionRoot(Authentication authentication) {
         super(authentication);
@@ -74,6 +76,8 @@ public class CustomMethodSecurityExpressionRoot extends SecurityExpressionRoot i
         super.setPermissionEvaluator(permissionEvaluator);
     }
 
+
+
     @Override
     public void setTrustResolver(AuthenticationTrustResolver trustResolver) {
         super.setTrustResolver(trustResolver);
@@ -85,28 +89,32 @@ public class CustomMethodSecurityExpressionRoot extends SecurityExpressionRoot i
     }
 
     @Override
-    public void setFilterObject(Object o) {
-        filterObject = o;
+    public void setFilterObject(Object filterObject) {
+        this.filterObject = filterObject;
     }
 
     @Override
     public Object getFilterObject() {
-        return filterObject;
+        return this.filterObject;
     }
 
     @Override
-    public void setReturnObject(Object o) {
-
+    public void setReturnObject(Object returnObject) {
+        this.returnObject = returnObject;
     }
 
     @Override
     public Object getReturnObject() {
-        return null;
+        return this.returnObject;
+    }
+
+    void setThis(Object target) {
+        this.target = target;
     }
 
     @Override
     public Object getThis() {
-        return this;
+        return this.target;
     }
 
     public UserRepository getUserRepository() {

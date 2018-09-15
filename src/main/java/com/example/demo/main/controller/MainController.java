@@ -36,16 +36,16 @@ public class MainController {
     }
 
 
-    @RequestMapping(path = "/acl")
+    @RequestMapping(path = "/acl/{id}")
     @Transactional
-    public String acl()
+    public String acl(@PathVariable final Long id)
     {
 
         // Prepare the information we'd like in our access control entry (ACE)
-        allBook().stream().forEach(el -> {
-            ObjectIdentity oi = new ObjectIdentityImpl(el.getClass(), el.getId());
+//        allBook().stream().forEach(el -> {
+            ObjectIdentity oi = new ObjectIdentityImpl(User.class, id);
 //            Sid sid = new PrincipalSid("sadm");
-            Permission p = BasePermission.ADMINISTRATION;
+//            Permission p = BasePermission.ADMINISTRATION;
 
 // Create or update the relevant ACL
             MutableAcl acl = null;
@@ -54,11 +54,11 @@ public class MainController {
             } catch (NotFoundException nfe) {
                 acl = aclService.createAcl(oi);
             }
-
+System.out.println(acl.getEntries());
 // Now grant some permissions via an access control entry (ACE)
 //            acl.insertAce(acl.getEntries().size(), p, sid, true);
-            aclService.updateAcl(acl);
-        });
+//            aclService.updateAcl(acl);
+//        });
         return "acl";
     }
 

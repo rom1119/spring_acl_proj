@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
-@Component
+//@Component
 public class CustomPermissionEvaluator implements PermissionEvaluator {
 
     private UserRepository userRepository;

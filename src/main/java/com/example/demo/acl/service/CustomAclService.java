@@ -1,18 +1,16 @@
 package com.example.demo.acl.service;
 
 import com.example.demo.acl.config.AclConfig;
-import com.example.demo.acl.config.CustomPermission;
 import com.example.demo.acl.config.CustomUserDetails;
+import com.example.demo.acl.model.AclEntry;
 import com.example.demo.acl.model.AclSecurityID;
+import com.example.demo.acl.repository.AclSecurityIDRepository;
 import com.example.demo.user.model.AuthorityInterface;
 import com.example.demo.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.acls.domain.BasePermission;
-import org.springframework.security.acls.domain.GrantedAuthoritySid;
-import org.springframework.security.acls.domain.ObjectIdentityImpl;
-import org.springframework.security.acls.domain.PrincipalSid;
+import org.springframework.security.acls.domain.*;
 import org.springframework.security.acls.model.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,6 +22,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Component
 @Order(1)
@@ -31,10 +30,14 @@ public class CustomAclService {
 
     private MutableAclService aclService;
 
+    private AclSecurityIDRepository securityIDRepository;
+
     @Autowired
-    public CustomAclService(MutableAclService aclService) {
+    public CustomAclService(MutableAclService aclService, AclSecurityIDRepository securityIDRepository) {
         this.aclService = aclService;
+        this.securityIDRepository = securityIDRepository;
     }
+
 
     public List<AccessControlEntry> getAclEntries(Class c, Serializable id)
     {
@@ -54,8 +57,6 @@ public class CustomAclService {
     public MutableAcl createAcl(Class c, Serializable id)
     {
         ObjectIdentity oi = new ObjectIdentityImpl(c, id);
-//            Sid sid = new PrincipalSid("sadm");
-//        Permission p = BasePermission.ADMINISTRATION;
 
 // Create or update the relevant ACL
         MutableAcl acl = null;
@@ -64,8 +65,7 @@ public class CustomAclService {
         } catch (NotFoundException nfe) {
             acl = aclService.createAcl(oi);
         }
-// Now grant some permissions via an access control entry (ACE)
-//            acl.insertAce(acl.getEntries().size(), p, sid, true);
+
         aclService.updateAcl(acl);
 
         return acl;
@@ -102,19 +102,10 @@ public class CustomAclService {
             for (Field f : fields) {
                 if (Modifier.isStatic(f.getModifiers())) {
                     permissionList.put(f.getName(), (Permission) f.get((Object) f.getName()));
-//                    System.out.println(f.getName());
-//                    System.out.println();
                 }
             }
             permisionClass = permisionClass.getSuperclass();
         }
-
-
-        permissionList.forEach((String el, Permission e) -> {
-            System.out.println(e.getMask());
-
-        });
-
 
         return permissionList;
     }
@@ -122,19 +113,25 @@ public class CustomAclService {
     private PrincipalSid createUserSid(User user)
     {
         CustomUserDetails customUserDetails = new CustomUserDetails(user);
-        PrincipalSid sid = new PrincipalSid(customUserDetails.getUsername());
 
-        return sid;
+        return getUserSid(customUserDetails.getUsername());
     }
 
     private GrantedAuthoritySid createAuthoritySid(AuthorityInterface authority)
     {
-        GrantedAuthoritySid sid = new GrantedAuthoritySid(authority.getName());
+        return getAuthoritySid(authority.getName());
 
-        return sid;
     }
 
+    private PrincipalSid getUserSid(String name)
+    {
+        return new PrincipalSid(name);
+    }
 
+    private GrantedAuthoritySid getAuthoritySid(String name)
+    {
+        return new GrantedAuthoritySid(name);
+    }
 
     public boolean isGranted(ObjectIdentity checkedObject, Authentication authentication, Permission permission)
     {
@@ -154,4 +151,62 @@ public class CustomAclService {
         return sids;
     }
 
+    private Sid getSidFromName(String name)
+    {
+        AclSecurityID findSid = securityIDRepository.findBySid(name);
+
+        if (findSid.isPrincipal()) {
+            return getUserSid(name);
+        } else {
+            return getAuthoritySid(name);
+        }
+    }
+
+    public Permission getPermissionFromMask(int mask) throws IllegalAccessException {
+        for (Map.Entry<String, Permission> el : getAvailablePermission().entrySet()) {
+            if (el.getValue().getMask() == mask) {
+                return el.getValue();
+            }
+        }
+
+        return null;
+    }
+
+    public String getPermissionName(Permission permission) throws IllegalAccessException {
+        for (Map.Entry<String, Permission> el : getAvailablePermission().entrySet()) {
+            if (el.getValue() == permission) {
+                return el.getKey();
+            }
+        }
+
+        return null;
+    }
+
+
+    public void createAclEntry(AclEntry entity, Class<?> aClass, Long id) throws IllegalAccessException {
+        MutableAcl acl = createAcl(aClass, id);
+
+        Sid sid = getSidFromName(entity.getSecurityID().getSid());
+//        entity.
+        Permission permission = getPermissionFromMask(entity.getMask());
+
+// Now grant some permissions via an access control entry (ACE)
+        acl.insertAce(acl.getEntries().size(), permission, sid, entity.isGranting());
+//        acl.updateAu(, );
+        aclService.updateAcl(acl);
+    }
+
+    public void updateAclEntry(AclEntry entity, Class<?> aClass, Long id) throws IllegalAccessException {
+        MutableAcl acl = createAcl(aClass, id);
+
+        Sid sid = getSidFromName(entity.getSecurityID().getSid());
+//        entity.
+        Permission permission = getPermissionFromMask(entity.getMask());
+
+// Now grant some permissions via an access control entry (ACE)
+        acl.insertAce(acl.getEntries().size(), permission, sid, entity.isGranting());
+//        acl.
+//        acl.updateAu(, );
+        aclService.updateAcl(acl);
+    }
 }

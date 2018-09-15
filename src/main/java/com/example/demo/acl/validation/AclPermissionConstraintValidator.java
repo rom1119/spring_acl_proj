@@ -14,18 +14,27 @@ public class AclPermissionConstraintValidator implements ConstraintValidator<Val
     @Autowired
     private CustomAclService aclService;
 
-//    @Override
-//    public void initialize(final ValidPermission constraintAnnotation)
-//    {
-//        oldPasswordField = constraintAnnotation.oldPasswordField();
-//        passwordField = constraintAnnotation.passwordField();
-//        confirmPasswordField = constraintAnnotation.confirmPasswordField();
-//
-//        initErrors();
-//    }
+    private String errorMessage;
 
     @Override
-    public boolean isValid(Integer integer, ConstraintValidatorContext constraintValidatorContext) {
-        return false;
+    public void initialize(final ValidPermission constraintAnnotation)
+    {
+        errorMessage = constraintAnnotation.message();
+    }
+
+    @Override
+    public boolean isValid(Integer integer, ConstraintValidatorContext context) {
+
+        int mask = integer;
+        try {
+            if(aclService.getPermissionFromMask(mask) == null) {
+                context.disableDefaultConstraintViolation();
+                context.buildConstraintViolationWithTemplate(errorMessage).addConstraintViolation();
+                return false;
+            }
+        } catch (IllegalAccessException e) {
+            return false;
+        }
+        return true;
     }
 }

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:td="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{Layout.html}"><head>
+</head>
+<body>
+
+<section layout:fragment="content" class="container">
+
+    <h1 th:text="#{registerForm.title}">form</h1>
+    <form th:action="@{/user/{id}/acl_entry/new (id=${targetSecuredObjectId})}" th:object="${entity}" method="POST" enctype="multipart/form-data">
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="securityID" th:text="#{aclEntry.label.securityID}">role</label>
+                <select th:field="*{securityID}" id="securityID">
+                    <option th:each="el : ${securityIDList}" th:text="${el.sid}" th:value="${el.id}">
+                        ROLE_ADMIN
+                    </option>
+                </select>
+                <div class="invalid-feedback"
+                     th:each="error: ${#fields.errors('securityID')}"
+                     th:text="${error}">
+                    Invalid value
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6" th:classappend="${#fields.hasErrors('mask')} ? 'is-invalid' : ''">
+                <label for="unitSecurity" th:text="#{aclEntry.label.unitSecurity}">role</label>
+                <select th:field="*{mask}" id="unitSecurity">
+                    <option th:each="el : ${availablePermission}" th:text="${el.key}" th:value="${el.value.mask}">
+                        ROLE_ADMIN
+                    </option>
+                </select>
+                <div class="invalid-feedback"
+                     th:each="error: ${#fields.errors('mask')}"
+                     th:text="${error}">
+                    Invalid value
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6" th:classappend="${#fields.hasErrors('aceOrder')} ? 'is-invalid' : ''">
+                <label for="aceOrder" th:text="#{aclEntry.label.aceOrder}">password</label>
+                <input type="text" th:field="*{aceOrder}" th:value="|''|" class="form-control" th:classappend="${#fields.hasErrors('aceOrder')} ? 'is-invalid' : ''" id="aceOrder" >
+                <div class="invalid-feedback"
+                     th:each="error: ${#fields.errors('aceOrder')}"
+                     th:text="${error}">
+                    Please provide a valid password.
+                </div>
+            </div>
+        </div>
+
+        <fieldset class="form-group">
+            <div class="row">
+                <legend class="col-form-label col-sm-2 pt-0" th:text="#{aclEntry.label.granting}">Radios</legend>
+                <div class="col-sm-10">
+                    <div class="form-check">
+                        <input class="form-check-input" th:field="*{granting}" th:classappend="${#fields.hasErrors('granting')} ? 'is-invalid' : ''" type="radio" id="gridRadios1" value="1" checked>
+                        <label class="form-check-label" for="gridRadios1">
+                            TAK
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" th:field="*{granting}" th:classappend="${#fields.hasErrors('granting')} ? 'is-invalid' : ''" type="radio" id="gridRadios2" value="0">
+                        <label class="form-check-label" for="gridRadios2">
+                            NIE
+                        </label>
+                    </div>
+                </div>
+                <div class="invalid-feedback"
+                     th:each="error: ${#fields.errors('granting')}"
+                     th:text="${error}">
+                    Please provide a valid password.
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="form-group">
+            <div class="row">
+                <legend class="col-form-label col-sm-2 pt-0" th:text="#{aclEntry.label.auditSuccess}">Radios</legend>
+                <div class="col-sm-10">
+                    <div class="form-check">
+                        <input class="form-check-input" th:field="*{auditSuccess}" th:classappend="${#fields.hasErrors('auditSuccess')} ? 'is-invalid' : ''" type="radio" id="auditSuccessYes" value="1" checked>
+                        <label class="form-check-label" for="auditSuccessYes">
+                            TAK
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" th:field="*{auditSuccess}" th:classappend="${#fields.hasErrors('auditSuccess')} ? 'is-invalid' : ''" type="radio" id="auditSuccessNo" value="0">
+                        <label class="form-check-label" for="auditSuccessNo">
+                            NIE
+                        </label>
+                    </div>
+                </div>
+                <div class="invalid-feedback"
+                     th:each="error: ${#fields.errors('auditSuccess')}"
+                     th:text="${error}">
+                    Please provide a valid password.
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="form-group">
+            <div class="row">
+                <legend class="col-form-label col-sm-2 pt-0" th:text="#{aclEntry.label.auditFailure}">Radios</legend>
+                <div class="col-sm-10">
+                    <div class="form-check">
+                        <input class="form-check-input" th:field="*{auditFailure}" th:classappend="${#fields.hasErrors('auditFailure')} ? 'is-invalid' : ''" type="radio"  id="auditFailureYes" value="1" checked>
+                        <label class="form-check-label" for="auditFailureYes">
+                            TAK
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" th:field="*{auditFailure}" th:classappend="${#fields.hasErrors('auditFailure')} ? 'is-invalid' : ''" type="radio" id="auditFailureNo" value="0">
+                        <label class="form-check-label" for="auditFailureNo">
+                            NIE
+                        </label>
+                    </div>
+                </div>
+                <div class="invalid-feedback"
+                     th:each="error: ${#fields.errors('auditFailure')}"
+                     th:text="${error}">
+                    Please provide a valid password.
+                </div>
+            </div>
+        </fieldset>
+
+
+        <button type="submit" th:text="#{editForm.title}" class="btn btn-primary">Sign in</button>
+    </form>
+
+</section>
+
+</body>
+</html>

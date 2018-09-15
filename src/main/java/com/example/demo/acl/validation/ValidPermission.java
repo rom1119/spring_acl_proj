@@ -19,7 +19,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface ValidPermission {
 
-    String message() default "Invalid opermission value";
+    String message() default "Invalid permission value";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 

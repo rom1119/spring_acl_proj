@@ -3,6 +3,7 @@ package com.example.demo.user.controller;
 import com.example.demo.acl.config.CustomUserDetails;
 import com.example.demo.acl.model.AclEntry;
 import com.example.demo.acl.model.AclSecurityID;
+import com.example.demo.acl.repository.AclEntryRepository;
 import com.example.demo.acl.repository.AclSecurityIDRepository;
 import com.example.demo.acl.service.CustomAclService;
 import com.example.demo.main.validation.group.PasswordChange;
@@ -21,6 +22,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.domain.AccessControlEntryImpl;
 import org.springframework.security.acls.model.AccessControlEntry;
+import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -63,6 +65,9 @@ public class UserController {
     @Autowired
     private AclSecurityIDRepository securityIDRepository;
 
+    @Autowired
+    private AclEntryRepository aclEntryRepository;
+
     private UserService userService;
 
 
@@ -77,7 +82,6 @@ public class UserController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String getAll( Model model) throws IllegalAccessException {
-        aclService.getAvailablePermission();
         List<User> users = userService.findAll();
         model.addAttribute("entities", users);
         return pathToView("list");
@@ -94,7 +98,7 @@ public class UserController {
         }
 
         List<AccessControlEntry> aclEntries = aclService.getAclEntries(user.getClass(), user.getId());
-
+//        aclEntries.get(0).
         model.addAttribute("entity", user);
         model.addAttribute("aclEntryList", aclEntries);
         return pathToView("show");
@@ -138,7 +142,7 @@ public class UserController {
     @RequestMapping(path = "/{id}/edit", method = RequestMethod.GET)
     public String editView(@Param("id") @PathVariable Long id, Model model)
     {
-        User user = userRepository.findById(id).get();
+        User user = userService.findByIdToEdit(id);
         if (user == null) {
             throw new ResourceNotFoundException("Nie znaleziono strony");
         }
@@ -158,17 +162,17 @@ public class UserController {
                        BindingResult result,
                        Model model,
                        RedirectAttributes attributes) throws IOException {
+        User userDb = userService.findByIdToEdit(userDto.getId());
+        if (userDb == null) {
+            throw new ResourceNotFoundException("Nie znaleziono strony");
+        }
+
         if (result.hasErrors()) {
             model.addAttribute("user", userDto);
             return pathToView("edit");
         }
 
         User user = modelMapper.map(userDto, User.class);
-        User userDb = userRepository.findById(user.getId()).get();
-
-        if (userDb == null) {
-            throw new ResourceNotFoundException("Nie znaleziono strony");
-        }
 
         user.getUserDetails().setFileName(userDb.getUserDetails().getFileName());
 
@@ -258,26 +262,36 @@ public class UserController {
         Map<String, Permission> availablePermission = aclService.getAvailablePermission();
         List<AclSecurityID> securityIDList = securityIDRepository.findAll();
 
+        model.addAttribute("targetSecuredObjectId", user.getId());
         model.addAttribute("entity", aclEntry);
         model.addAttribute("availablePermission", availablePermission);
         model.addAttribute("securityIDList", securityIDList);
-        return pathToView("addAclEntry");
+        return pathToView("aclEntry/new");
     }
 
-    //    @PreAuthorize("hasPermission(#user, 'OWNER')")
-//    @PreAuthorize("hasPermission(#user, 'WRITE')")
-    @RequestMapping(path = "/acl_entry/new", method = RequestMethod.POST)
-    public String addAclEntryProccess(@Param("entity") @Valid @ModelAttribute("entity") AclEntry entity,
-                               BindingResult result,
-                               Model model,
-                               RedirectAttributes attributes,
-                               Authentication authentication
-                                        ) throws IOException {
+    @RequestMapping(path = "/{id}/acl_entry/new", method = RequestMethod.POST)
+    public String addAclEntryProccess(
+                           @PathVariable final Long id,
+                           @Param("entity") @Valid @ModelAttribute("entity") AclEntry entity,
+                           BindingResult result,
+                           Model model,
+                           RedirectAttributes attributes,
+                           Authentication authentication
+                            ) throws IOException, IllegalAccessException {
 
         if (result.hasErrors()) {
+            Map<String, Permission> availablePermission = aclService.getAvailablePermission();
+            List<AclSecurityID> securityIDList = securityIDRepository.findAll();
+
+            model.addAttribute("availablePermission", availablePermission);
+            model.addAttribute("securityIDList", securityIDList);
             model.addAttribute("entity", entity);
-            return pathToView("addAclEntry");
+            return pathToView("aclEntry/new");
         }
+
+        User user = userRepository.findById(id).get();
+
+        aclService.createAclEntry(entity, user.getClass(), id);
 
 
 //        System.out.println(user.getId());
@@ -290,6 +304,67 @@ public class UserController {
 
 
     }
+
+    @RequestMapping(path = "/{id}/acl_entry/{aclEntryId}/edit", method = RequestMethod.GET)
+    public String editAclEntryView(
+            @Param("id") @PathVariable Long id,
+            @Param("aclEntryId") @PathVariable Long aclEntryId,
+            Model model)
+            throws IllegalAccessException {
+        User user = userRepository.findById(id).get();
+        if (user == null) {
+            throw new ResourceNotFoundException("Nie znaleziono strony");
+
+        }
+
+        AclEntry aclEntry = aclEntryRepository.findById(aclEntryId)
+                .orElseThrow(() -> new NotFoundException("Nie znaleziono strony"));
+        Map<String, Permission> availablePermission = aclService.getAvailablePermission();
+        List<AclSecurityID> securityIDList = securityIDRepository.findAll();
+
+        model.addAttribute("targetSecuredObjectId", user.getId());
+        model.addAttribute("entity", aclEntry);
+        model.addAttribute("availablePermission", availablePermission);
+        model.addAttribute("securityIDList", securityIDList);
+        return pathToView("aclEntry/edit");
+    }
+
+    @RequestMapping(path = "/acl_entry/{}/edit", method = RequestMethod.POST)
+    public String editAclEntryProccess(
+            @PathVariable final Long id,
+            @Param("entity") @Valid @ModelAttribute("entity") AclEntry entity,
+            BindingResult result,
+            Model model,
+            RedirectAttributes attributes,
+            Authentication authentication
+    ) throws IOException, IllegalAccessException {
+
+        if (result.hasErrors()) {
+            Map<String, Permission> availablePermission = aclService.getAvailablePermission();
+            List<AclSecurityID> securityIDList = securityIDRepository.findAll();
+
+            model.addAttribute("availablePermission", availablePermission);
+            model.addAttribute("securityIDList", securityIDList);
+            model.addAttribute("entity", entity);
+            return pathToView("aclEntry/new");
+        }
+
+        User user = userRepository.findById(id).get();
+
+        aclService.createAclEntry(entity, user.getClass(), id);
+
+
+//        System.out.println(user.getId());
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        attributes.addFlashAttribute("saveAclEntry", true);
+        attributes.addFlashAttribute("securityId", entity.getSecurityID().getSid());
+        attributes.addAttribute("id", userDetails.getId());
+        return redirectTo(mainPath + "/{id}");
+
+
+    }
+
 
     private String pathToView(String view)
     {

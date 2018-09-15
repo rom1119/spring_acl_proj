@@ -84,9 +84,9 @@
     <div class="form-row">
         <div class="form-group col-md-6">
             <label for="image" th:text="#{registerForm.label.image}">role</label>
-            <input type="file" th:field="*{file}" class="form-control" th:classappend="${#fields.hasErrors('file')} ? 'is-invalid' : ''" id="image" th:placeholder="#{registerForm.label.image}">
+            <input type="file" th:field="*{userDetails.file}" class="form-control" th:classappend="${#fields.hasErrors('userDetails.file')} ? 'is-invalid' : ''" id="image" th:placeholder="#{registerForm.label.image}">
             <div class="invalid-feedback"
-                 th:each="error: ${#fields.errors('file')}"
+                 th:each="error: ${#fields.errors('userDetails.file')}"
                  th:text="#{${error}}">
                 Invalid file
             </div>

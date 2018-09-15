@@ -31,10 +31,13 @@ public class AclConfig {
     @Autowired
     private CustomPermissionFactory customPermissionFactory;
 
+    @Autowired
+    private CustomMethodSecurityExpressionHandler customMethodSecurityExpressionHandler;
+
     @Bean
     public MethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler() {
         DefaultMethodSecurityExpressionHandler expressionHandler
-                = new DefaultMethodSecurityExpressionHandler();
+                = customMethodSecurityExpressionHandler;
         AclPermissionEvaluator permissionEvaluator
                 = new AclPermissionEvaluator(aclService());
         permissionEvaluator.setObjectIdentityRetrievalStrategy(new CustomObjectIdentityRetrievalStrategy());
@@ -57,7 +60,7 @@ public class AclConfig {
     @Bean
     public AclAuthorizationStrategy aclAuthorizationStrategy() {
         return new AclAuthorizationStrategyImpl(
-                new SimpleGrantedAuthority("ROLE_ADMIN"));
+                new SimpleGrantedAuthority("ROLE_SUPER_ADMIN"));
     }
 
     @Bean
