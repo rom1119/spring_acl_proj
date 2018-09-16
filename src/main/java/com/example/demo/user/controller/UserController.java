@@ -83,6 +83,12 @@ public class UserController {
     @RequestMapping(method = RequestMethod.GET)
     public String getAll( Model model) throws IllegalAccessException {
         List<User> users = userService.findAll();
+        for (User user : users) {
+            List<User> oneToEdit = userService.getOneToEdit(user);
+            System.out.println(oneToEdit.size());
+
+        }
+
         model.addAttribute("entities", users);
         return pathToView("list");
 
@@ -135,7 +141,7 @@ public class UserController {
         aclService.createAclWithUserSid(user.getClass(), user.getId(), user);
 
         redirectAttributes.addFlashAttribute("save", true);
-        redirectAttributes.addFlashAttribute("userEmail", user.getEmail());
+        redirectAttributes.addFlashAttribute("userName", user.getEmail());
         return redirectToIndex();
     }
 
@@ -155,8 +161,6 @@ public class UserController {
         return pathToView("edit");
     }
 
-//    @PreAuthorize("hasPermission(#user, 'OWNER')")
-//    @PreAuthorize("hasPermission(#user, 'WRITE')")
     @RequestMapping(path = "/edit", method = RequestMethod.POST)
     public String editProccess(@Param("user") @Valid @ModelAttribute("user") UserDto userDto,
                        BindingResult result,
@@ -182,7 +186,7 @@ public class UserController {
 //        System.out.println(user.getId());
 
         attributes.addFlashAttribute("save", true);
-        attributes.addFlashAttribute("userEmail", userDto.getEmail());
+        attributes.addFlashAttribute("userName", userDto.getEmail());
         return redirectToIndex();
 
 
@@ -200,7 +204,7 @@ public class UserController {
 
 
         attributes.addFlashAttribute("remove", true);
-        attributes.addFlashAttribute("userEmail", user.getEmail());
+        attributes.addFlashAttribute("userName", user.getEmail());
         return redirectToIndex();
     }
 
@@ -245,7 +249,7 @@ public class UserController {
         userService.changePassword(userDto);
 
         attributes.addAttribute("passwordChanges", true);
-        attributes.addAttribute("name", user.getEmail());
+        attributes.addAttribute("userName", user.getEmail());
 
         return redirectToIndex();
     }
@@ -286,6 +290,7 @@ public class UserController {
             model.addAttribute("availablePermission", availablePermission);
             model.addAttribute("securityIDList", securityIDList);
             model.addAttribute("entity", entity);
+            model.addAttribute("targetSecuredObjectId", id);
             return pathToView("aclEntry/new");
         }
 
@@ -293,13 +298,11 @@ public class UserController {
 
         aclService.createAclEntry(entity, user.getClass(), id);
 
-
 //        System.out.println(user.getId());
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
         attributes.addFlashAttribute("saveAclEntry", true);
         attributes.addFlashAttribute("securityId", entity.getSecurityID().getSid());
-        attributes.addAttribute("id", userDetails.getId());
+        attributes.addAttribute("id", id);
         return redirectTo(mainPath + "/{id}");
 
 

@@ -12,6 +12,7 @@ import com.example.demo.user.repository.UserDetailsRepository;
 import com.example.demo.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.acls.domain.ObjectIdentityImpl;
 import org.springframework.security.acls.model.Acl;
 import org.springframework.security.acls.model.MutableAclService;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -130,27 +132,61 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public User findByIdToAdministration(Long id) {
+        return userRepository.findById(id).get();
+    }
+    @Override
     public User findByIdToChangePassword(Long id) {
         return userRepository.findById(id).get();
     }
 
     @Override
     public boolean canDelete(User user) {
-        return aclService.isGranted(new ObjectIdentityImpl(user), authentication, CustomPermission.DELETE);
+        return getOneToDelete(user).size() > 0;
     }
 
     @Override
     public boolean canEdit(User user) {
-
-        CustomUserDetails customUserDetails = new CustomUserDetails(user);
-
-        if (customUserDetails.equals(authentication.getPrincipal())) {
-            return true;
-        }
-
-        return aclService.isGranted(new ObjectIdentityImpl(user), authentication, CustomPermission.WRITE);
+        System.out.println(getOneToEdit(user).size());
+        return getOneToEdit(user).size() > 0;
     }
 
+    @Override
+    public boolean canChangePassword(User user) {
+        return getOneToChangePassword(user).size() > 0;
+    }
+
+
+    @Override
+    public List<User> getOneToChangePassword(User user) {
+        User toEdit = findByIdToChangePassword(user.getId());
+        return Arrays.asList(toEdit);
+    }
+
+    @Override
+    public List<User> getOneToEdit(User user) {
+        User toEdit = findOne(user.getId());
+        List<User> arr = new ArrayList<>();
+        if (toEdit != null) {
+            arr.add(toEdit);
+        }
+        return arr;
+    }
+
+    @Override
+    public List<User> getOneToDelete(User user) {
+        User toEdit = findOne(user.getId());
+        return Arrays.asList(toEdit);
+    }
+
+
+
+
+    @Override
+    public List<User> getOneToAdministration(User user) {
+        User toEdit = findOne(user.getId());
+        return Arrays.asList(toEdit);
+    }
 
     private boolean emailExist(String email) {
         User user = userRepository.findByEmail(email);
@@ -158,6 +194,10 @@ public class UserService implements IUserService {
             return true;
         }
         return false;
+    }
+
+    private User findOne(Long id) {
+        return userRepository.findById(id).get();
     }
 
     public Authentication getAuthentication() {

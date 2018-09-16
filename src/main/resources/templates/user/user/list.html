@@ -9,9 +9,8 @@
 
 
 <section layout:fragment="content" class="container">
-    <h3 th:if="${remove}" th:text="|Użytkownik '${name}' został usunięty|">Usunięto użytkowniaka</h3>
-    <h3 th:if="${save}" th:text="|Użytkownik '${name}' został zapisany|">Zapisano użytkowniaka</h3>
-    <h3 th:if="${passwordChanges}" th:text="|Hasło zostało zmienione dla użytkownika '${name}'|">Zapisano użytkowniaka</h3>
+<div th:replace="alerts.html :: userAlert" ></div>
+
     <table class="table">
         <caption>List of users</caption>
         <thead>
@@ -37,9 +36,9 @@
             <td ><p th:each="role : *{roles}" th:text="|${#strings.toLowerCase(role.name)} ,|">ROLE_USER,ROLE_ADMIN</p></td>
             <td>
                 <a th:href="@{/user/{id}(id=*{id})}" class="btn btn-outline-success btn-sm">Zobacz szczegóły</a>
-                <a th:href="@{/user/{id}/edit(id=*{id})}" class="btn btn-outline-success btn-sm">Edytuj</a>
-                <a th:href="@{/user/{id}/change_password(id=*{id})}" class="btn btn-outline-success btn-sm">Zmień hasło</a>
-                <a th:href="@{/user/{id}/delete(id=*{id})}"  class="btn btn-outline-danger btn-sm">Usuń</a>
+                <a th:href="@{/user/{id}/edit(id=*{id})}"  th:if="${#arrays.length(@userService.getOneToEdit(entity)) > 0}" class="btn btn-outline-success btn-sm">Edytuj</a>
+                <a th:href="@{/user/{id}/change_password(id=*{id})}" th:if="${@userService.canChangePassword(entity)}" class="btn btn-outline-success btn-sm">Zmień hasło</a>
+                <a th:href="@{/user/{id}/delete(id=*{id})}" th:if="${@userService.canDelete(entity)}"  class="btn btn-outline-danger btn-sm">Usuń</a>
 
             </td>
         </tr>

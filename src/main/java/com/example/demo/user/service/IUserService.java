@@ -23,22 +23,39 @@ public interface IUserService {
     @PostFilter("hasPermission(filterObject, 'READ') or isOwner(filterObject)")
     List<User> findAll();
 
-    @PostAuthorize("hasPermission(returnObject, 'READ') or hasRole('SUPER_ADMIN')")
+    @PostAuthorize("hasPermission(returnObject, 'READ') or hasRole('SUPER_ADMIN') or isOwner(returnObject)")
     User findByIdToView(Long id);
 
-    @PostAuthorize("hasPermission(returnObject, 'WRITE') ")
+    @PostAuthorize("hasPermission(returnObject, 'WRITE') or isOwner(returnObject) ")
     public User findByIdToEdit(Long id);
 
-    @PostAuthorize("hasPermission(returnObject, 'DELETE')")
+    @PostAuthorize("hasPermission(returnObject, 'DELETE') or isOwner(returnObject)")
     public User findByIdToDelete(Long id);
 
-    @PostAuthorize("hasPermission(returnObject, 'ADMINISTRATION') ")
-    public User findByIdToChangePassword(Long id);
+    @PostAuthorize("isOwner(returnObject) ")
+    User findByIdToChangePassword(Long id);
 
-    @PreAuthorize("hasPermission(#entity, 'DELETE')")
-    public boolean canDelete(@Param("entity") User user);
+    @PostAuthorize("hasPermission(returnObject, 'ADMINISTRATION') or isOwner(returnObject)")
+    User findByIdToAdministration(Long id);
 
-    @PreAuthorize("hasPermission(#entity, 'WRITE')")
-    public boolean canEdit(@Param("entity") User user);
+    boolean canDelete(@Param("entity") User user);
+
+    boolean canEdit(@Param("entity") User user);
+
+    boolean canChangePassword(@Param("entity") User user);
+
+    @PostFilter("hasPermission(filterObject, 'WRITE') or isOwner(filterObject)")
+    public List<User> getOneToEdit(@Param("entity") User user);
+
+    @PostFilter("hasPermission(filterObject, 'DELETE') or isOwner(filterObject)")
+    public List<User> getOneToDelete(@Param("entity") User user);
+
+    @PostFilter("isOwner(filterObject)")
+    public List<User> getOneToChangePassword(@Param("entity") User user);
+
+    @PostFilter("hasPermission(filterObject, 'ADMINISTRATION') or isOwner(filterObject)")
+    public List<User> getOneToAdministration(@Param("entity") User user);
+
+
 
 }

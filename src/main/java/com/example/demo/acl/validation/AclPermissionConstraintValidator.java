@@ -3,6 +3,7 @@ package com.example.demo.acl.validation;
 
 import com.example.demo.acl.service.CustomAclService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -26,6 +27,9 @@ public class AclPermissionConstraintValidator implements ConstraintValidator<Val
     public boolean isValid(Integer integer, ConstraintValidatorContext context) {
 
         int mask = integer;
+        if (aclService == null) {
+            return true;
+        }
         try {
             if(aclService.getPermissionFromMask(mask) == null) {
                 context.disableDefaultConstraintViolation();

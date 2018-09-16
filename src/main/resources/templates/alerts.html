@@ -1,0 +1,17 @@
+<!--User-->
+
+<div th:fragment="userAlert" th:if="${userName}" class="alert alert-dismissible fade show"
+     th:classappend="${save} or ${passwordChanges} ? 'alert-success' : 'alert-danger' "
+     role="alert" xmlns:th="http://www.w3.org/1999/xhtml">
+    <p th:if="${userName} and ${save}"
+       th:utext="|Użytkownik <strong>${userName}</strong> został zapisany|" >
+    <p th:if="${userName} and ${remove}"
+       th:text="|Użytkownik <strong>${userName}</strong> został usunięty|" >
+    </p>
+    <p th:if="${userName} and ${passwordChanges}"
+       th:text="|Hasło zostało zmienione dla użytkownika <strong>${userName}</strong> |" >
+    </p>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
