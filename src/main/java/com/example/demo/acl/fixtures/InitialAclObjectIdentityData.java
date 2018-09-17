@@ -1,5 +1,6 @@
 package com.example.demo.acl.fixtures;
 
+import com.example.demo.acl.config.CustomUserDetails;
 import com.example.demo.acl.model.AclClass;
 import com.example.demo.acl.model.AclObjectIdentity;
 import com.example.demo.acl.model.AclSecurityID;
@@ -18,6 +19,7 @@ import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Component
 @DependsOn({"initialUserData", "initialBookData", "initialAclSecurityIDData"})
@@ -64,9 +66,10 @@ public class InitialAclObjectIdentityData {
         AclObjectIdentity aclObjectIdentity = new AclObjectIdentity();
         aclObjectIdentity.setEntriesInheriting(true);
 
-        Optional<AclSecurityID> sid = aclSecurityIDRepository.findById((long) 1);
+        CustomUserDetails customUserDetails = new CustomUserDetails(user);
+        AclSecurityID sid = aclSecurityIDRepository.findBySid(customUserDetails.getUsername());
 
-        aclObjectIdentity.setOwner(sid.get());
+        aclObjectIdentity.setOwner(sid);
         aclObjectIdentity.setObjectId(String.valueOf(user.getId()));
 
         AclClass aclClass = aclClassRepository.findByClassField(user.getClass().getName());
@@ -82,7 +85,6 @@ public class InitialAclObjectIdentityData {
     {
         AclObjectIdentity aclObjectIdentity = new AclObjectIdentity();
         aclObjectIdentity.setEntriesInheriting(true);
-
 
         Optional<AclSecurityID> sid = aclSecurityIDRepository.findById((long) 1);
 

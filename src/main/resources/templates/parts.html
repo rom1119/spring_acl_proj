@@ -1,4 +1,4 @@
-<table class="table" th:fragment="aclList (entities)" xmlns:th="http://www.w3.org/1999/xhtml">
+<table class="table" th:fragment="aclList (entities, targetSecuredObjectId)" xmlns:th="http://www.w3.org/1999/xhtml">
     <caption>List zabezpieczonych typow</caption>
     <thead>
     <tr>
@@ -7,6 +7,7 @@
         <th scope="col">Identyfikator zabezpieczający</th>
         <th scope="col">Rodzaj dostępu</th>
         <th scope="col">Dostęp przydzielony</th>
+        <th scope="col">Akcje</th>
 
     </tr>
     </thead>
@@ -18,12 +19,12 @@
         <td th:text="${@customAclService.getPermissionName(entity.permission)}">User</td>
         <td th:if="*{granting}" th:text="|TAK|">TAK</td>
         <td th:unless="*{granting}" th:text="|NIE|">NIE</td>
-        <!--<td>-->
-        <!--<a th:href="@{/book/{id}(id=*{id})}" class="btn btn-outline-success btn-sm">Zobacz szczegóły</a>-->
-        <!--<a th:href="@{/book/{id}/edit(id=*{id})}" class="btn btn-outline-success btn-sm">Edytuj</a>-->
-        <!--&lt;!&ndash;<a th:href="@{/user/{id}/delete(id=*{id})}" sec:authorize="hasPermission(#vars.entity,'OWNER')" class="btn btn-outline-danger btn-sm">Usuń</a>&ndash;&gt;-->
+        <td>
+        <a th:href="@{/user/{targetSecuredObjectId}/acl_entry/{aclEntryIndex}/edit (targetSecuredObjectId=${targetSecuredObjectId}, aclEntryIndex=${iter.index})}" class="btn btn-outline-success btn-sm">Edytuj</a>
+        <a th:href="@{/user/{targetSecuredObjectId}/acl_entry/{aclEntryIndex}/delete (targetSecuredObjectId=${targetSecuredObjectId}, aclEntryIndex=${iter.index})}" class="btn btn-outline-success btn-sm">Usuń</a>
+        <!--<a th:href="@{/user/{id}/delete(id=*{id})}" sec:authorize="hasPermission(#vars.entity,'OWNER')" class="btn btn-outline-danger btn-sm">Usuń</a>-->
 
-        <!--</td>-->
+        </td>
     </tr>
     </tbody>
 </table>

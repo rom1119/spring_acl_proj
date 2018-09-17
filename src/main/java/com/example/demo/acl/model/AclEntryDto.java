@@ -1,49 +1,32 @@
 package com.example.demo.acl.model;
 
 import com.example.demo.acl.validation.ValidPermission;
+import com.example.demo.main.validation.group.Created;
+import com.example.demo.main.validation.group.Edited;
 
-import javax.persistence.*;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-@Entity
-@Table(name = "acl_entry")
-public class AclEntry {
-
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name = "id", unique = true)
+public class AclEntryDto
+{
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name="acl_object_identity", nullable=false)
-    private AclObjectIdentity objectIdentity;
+//    private AclObjectIdentity objectIdentity;
 
-    @Column(name = "ace_order")
     private int aceOrder;
 
-    @ManyToOne
-    @JoinColumn(name="sid", nullable=false)
-    @NotNull
+    @NotNull(groups = {Created.class})
     private AclSecurityID securityID;
 
-    @ValidPermission
-    @Column(name = "mask")
+    @ValidPermission(groups = {Edited.class})
     private int mask;
 
-    @Column(name = "granting")
     private boolean granting;
 
-
-    @Column(name = "audit_success")
     private boolean auditSuccess;
 
-
-    @Column(name = "audit_failure")
     private boolean auditFailure;
 
-    public AclEntry() {
-
+    public AclEntryDto() {
     }
 
     public Long getId() {
@@ -52,14 +35,6 @@ public class AclEntry {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public AclObjectIdentity getObjectIdentity() {
-        return objectIdentity;
-    }
-
-    public void setObjectIdentity(AclObjectIdentity objectIdentity) {
-        this.objectIdentity = objectIdentity;
     }
 
     public int getAceOrder() {

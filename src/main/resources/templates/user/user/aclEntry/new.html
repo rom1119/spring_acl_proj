@@ -14,7 +14,7 @@
         <div class="form-row">
             <div class="form-group col-md-6">
                 <label for="securityID" th:text="#{aclEntry.label.securityID}">role</label>
-                <select th:field="*{securityID}" id="securityID">
+                <select th:field="*{securityID}" id="securityID" class="form-control" th:classappend="${#fields.hasErrors('securityID')} ? 'is-invalid' : ''">
                     <option th:each="el : ${securityIDList}" th:text="${el.sid}" th:value="${el.id}">
                         ROLE_ADMIN
                     </option>
@@ -30,7 +30,7 @@
         <div class="form-row">
             <div class="form-group col-md-6" th:classappend="${#fields.hasErrors('mask')} ? 'is-invalid' : ''">
                 <label for="unitSecurity" th:text="#{aclEntry.label.unitSecurity}">role</label>
-                <select th:field="*{mask}" id="unitSecurity">
+                <select th:field="*{mask}" id="unitSecurity" class="form-control" th:classappend="${#fields.hasErrors('mask')} ? 'is-invalid' : ''">
                     <option th:each="el : ${availablePermission}" th:text="${el.key}" th:value="${el.value.mask}">
                         ROLE_ADMIN
                     </option>

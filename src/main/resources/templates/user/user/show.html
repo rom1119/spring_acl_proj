@@ -15,7 +15,7 @@
         </div>
     </div>
     <a th:href="@{/user/{id}/acl_entry/new (id=${entity.id})}" class="btn btn-outline-success my-2 my-sm-0">Dodaj zabezpieczenie</a>
-    <div th:replace="parts.html :: aclList(entities=${aclEntryList})" ></div>
+    <div th:replace="parts.html :: aclList(entities=${aclEntryList}, targetSecuredObjectId=${entity.id})" ></div>
 </section>
 
 

@@ -73,7 +73,7 @@ public class BookController {
         }
 
         bookRepository.save(entity);
-        aclService.createAcl(entity.getClass(), entity.getId());
+        aclService.getAcl(entity.getClass(), entity.getId());
         redirectAttributes.addFlashAttribute("new", true);
 //        redirectAttributes.addFlashAttribute("name", aclObjectIdentity.ge());
         return redirectToIndex();

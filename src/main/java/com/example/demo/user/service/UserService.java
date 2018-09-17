@@ -135,6 +135,7 @@ public class UserService implements IUserService {
     public User findByIdToAdministration(Long id) {
         return userRepository.findById(id).get();
     }
+
     @Override
     public User findByIdToChangePassword(Long id) {
         return userRepository.findById(id).get();

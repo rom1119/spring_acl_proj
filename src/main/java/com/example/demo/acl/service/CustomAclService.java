@@ -3,26 +3,26 @@ package com.example.demo.acl.service;
 import com.example.demo.acl.config.AclConfig;
 import com.example.demo.acl.config.CustomUserDetails;
 import com.example.demo.acl.model.AclEntry;
+import com.example.demo.acl.model.AclObjectIdentity;
 import com.example.demo.acl.model.AclSecurityID;
+import com.example.demo.acl.repository.AclEntryRepository;
+import com.example.demo.acl.repository.AclObjectIdentityRepository;
 import com.example.demo.acl.repository.AclSecurityIDRepository;
+import com.example.demo.main.model.ResourceInterface;
 import com.example.demo.user.model.AuthorityInterface;
 import com.example.demo.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.acls.domain.*;
 import org.springframework.security.acls.model.*;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
-import java.util.stream.Stream;
 
 @Component
 @Order(1)
@@ -32,12 +32,20 @@ public class CustomAclService {
 
     private AclSecurityIDRepository securityIDRepository;
 
+    private AclObjectIdentityRepository objectIdentityRepository;
+
+    private AclEntryRepository aclEntryRepository;
+
+    private AclObjectDomainService aclObjectDomainService;
+
     @Autowired
-    public CustomAclService(MutableAclService aclService, AclSecurityIDRepository securityIDRepository) {
+    public CustomAclService(MutableAclService aclService, AclSecurityIDRepository securityIDRepository, AclObjectIdentityRepository objectIdentityRepository, AclEntryRepository aclEntryRepository, AclObjectDomainService aclObjectDomainService) {
         this.aclService = aclService;
         this.securityIDRepository = securityIDRepository;
+        this.objectIdentityRepository = objectIdentityRepository;
+        this.aclEntryRepository = aclEntryRepository;
+        this.aclObjectDomainService = aclObjectDomainService;
     }
-
 
     public List<AccessControlEntry> getAclEntries(Class c, Serializable id)
     {
@@ -54,7 +62,7 @@ public class CustomAclService {
         return acl.getEntries();
     }
 
-    public MutableAcl createAcl(Class c, Serializable id)
+    public MutableAcl getAcl(Class c, Serializable id)
     {
         ObjectIdentity oi = new ObjectIdentityImpl(c, id);
 
@@ -73,7 +81,7 @@ public class CustomAclService {
 
     public MutableAcl createAclWithUserSid(Class c, Serializable id, User user)
     {
-        MutableAcl acl = createAcl(c, id);
+        MutableAcl acl = getAcl(c, id);
         PrincipalSid sid = createUserSid(user);
         acl.setOwner(sid);
 
@@ -84,7 +92,7 @@ public class CustomAclService {
 
     public MutableAcl createAclWithAuthoritySid(Class c, Serializable id, AuthorityInterface authority)
     {
-        MutableAcl acl = createAcl(c, id);
+        MutableAcl acl = getAcl(c, id);
         GrantedAuthoritySid sid = createAuthoritySid(authority);
         acl.setOwner(sid);
 
@@ -184,7 +192,7 @@ public class CustomAclService {
 
 
     public void createAclEntry(AclEntry entity, Class<?> aClass, Long id) throws IllegalAccessException {
-        MutableAcl acl = createAcl(aClass, id);
+        MutableAcl acl = getAcl(aClass, id);
 
         Sid sid = getSidFromName(entity.getSecurityID().getSid());
 //        entity.
@@ -196,17 +204,23 @@ public class CustomAclService {
         aclService.updateAcl(acl);
     }
 
-    public void updateAclEntry(AclEntry entity, Class<?> aClass, Long id) throws IllegalAccessException {
-        MutableAcl acl = createAcl(aClass, id);
+    public AccessControlEntry updateAclEntry(AclEntry entity,int indexAce, ResourceInterface objDomain) throws IllegalAccessException {
 
-        Sid sid = getSidFromName(entity.getSecurityID().getSid());
-//        entity.
-        Permission permission = getPermissionFromMask(entity.getMask());
-
-// Now grant some permissions via an access control entry (ACE)
-        acl.insertAce(acl.getEntries().size(), permission, sid, entity.isGranting());
-//        acl.
-//        acl.updateAu(, );
+        MutableAcl acl = getAcl(objDomain.getClass(), objDomain.getId());
+        acl.updateAce(indexAce, getPermissionFromMask(entity.getMask()));
         aclService.updateAcl(acl);
+        AccessControlEntry accessControlEntry = acl.getEntries().get(indexAce);
+
+        return accessControlEntry;
+    }
+
+    public String getSidName(AccessControlEntry accessControlEntry) {
+        if (accessControlEntry.getSid() instanceof PrincipalSid) {
+            return ((PrincipalSid) accessControlEntry.getSid()).getPrincipal();
+        } else if (accessControlEntry.getSid() instanceof GrantedAuthoritySid) {
+            return ((GrantedAuthoritySid) accessControlEntry.getSid()).getGrantedAuthority();
+        }
+
+        return null;
     }
 }

@@ -1,5 +1,7 @@
 package com.example.demo.acl.config;
 
+import com.example.demo.acl.model.AclObjectIdentity;
+import com.example.demo.acl.model.AclSecurityID;
 import com.example.demo.user.model.User;
 import com.example.demo.user.model.UserDto;
 import com.example.demo.user.repository.UserRepository;
@@ -50,8 +52,20 @@ public class CustomMethodSecurityExpressionRoot extends SecurityExpressionRoot i
 
     public boolean isOwner(Object object) {
 
-        return checkUser(object);
+        if (object instanceof User || object instanceof UserDto ) {
+            return checkUser(object);
 
+        } else if (object instanceof AclObjectIdentity) {
+            return checkAclObjectIdentity((AclObjectIdentity) object);
+        }
+
+        return false;
+    }
+
+    private boolean checkAclObjectIdentity(AclObjectIdentity object) {
+        AclSecurityID sid = object.getOwner();
+
+        return ((CustomUserDetails) authentication.getPrincipal()).getUsername().equalsIgnoreCase(sid.getSid());
     }
 
     private boolean checkUser(Object o)
