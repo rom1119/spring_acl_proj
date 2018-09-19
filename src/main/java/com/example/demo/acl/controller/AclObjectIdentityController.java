@@ -26,6 +26,7 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping(path = AclObjectIdentityController.mainPath)
+@PreAuthorize("hasRole('SUPER_ADMIN')")
 public class AclObjectIdentityController {
 
     private static final String pathToViews = "acl/aclObjectIdentity/";

@@ -27,6 +27,7 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping(path = AclEntryController.mainPath)
+@PreAuthorize("hasRole('SUPER_ADMIN')")
 public class AclEntryController {
 
     private static final String pathToViews = "acl/aclEntry/";

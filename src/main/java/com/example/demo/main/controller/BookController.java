@@ -90,7 +90,7 @@ public class BookController {
         return pathToView("edit");
     }
 
-    @PreAuthorize("hasPermission(#entity, 'ADMINISTRATIONd')")
+//    @PreAuthorize("hasPermission(#entity, 'ADMINISTRATION')")
     @RequestMapping(path = "/edit", method = RequestMethod.POST)
     public String editProccess(@Param("entity") @ModelAttribute Book entity, RedirectAttributes redirectAttributes)
     {

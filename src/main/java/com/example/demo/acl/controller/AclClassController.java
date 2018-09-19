@@ -3,6 +3,7 @@ package com.example.demo.acl.controller;
 import com.example.demo.acl.model.AclClass;
 import com.example.demo.acl.repository.AclClassRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping(path = "acl_class")
+@PreAuthorize("hasRole('SUPER_ADMIN')")
 public class AclClassController {
 
     private static final String pathToViews = "acl/aclClass/";

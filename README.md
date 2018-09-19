@@ -10,3 +10,8 @@ spring application with acl managed objects
 7. move to root dir project
 8. set main class in configuration to "com.example.demo.DemoApplication"
 9. run your app
+
+Example users
+1. login: 'sadm' , password: 'test', role: 'SUPER_ADMIN'
+2. login: 'adm' , password: 'test', role: 'ADMIN'
+3. login: 'use' , password: 'test', role: 'USER'

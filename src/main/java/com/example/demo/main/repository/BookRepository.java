@@ -7,9 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
 
-//    @Override
-//    @PostAuthorize("hasPermission(returnObject.get(), 'WRITE')")
-//    Optional<Book> findById(Long aLong);
-
 
 }
