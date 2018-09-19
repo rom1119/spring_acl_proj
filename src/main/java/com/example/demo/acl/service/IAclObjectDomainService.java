@@ -7,5 +7,5 @@ import org.springframework.security.access.prepost.PostAuthorize;
 public interface IAclObjectDomainService {
 
     @PostAuthorize("hasPermission(#obj, 'ADMINISTRATION') or isOwner(returnObject)")
-    AclObjectIdentity chackAccessObjectDomain(ResourceInterface obj);
+    AclObjectIdentity checkAccessObjectDomain(ResourceInterface obj);
 }

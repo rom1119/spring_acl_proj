@@ -6,10 +6,32 @@
     <p th:if="${userName} and ${save}"
        th:utext="|Użytkownik <strong>${userName}</strong> został zapisany|" >
     <p th:if="${userName} and ${remove}"
-       th:text="|Użytkownik <strong>${userName}</strong> został usunięty|" >
+       th:utext="|Użytkownik <strong>${userName}</strong> został usunięty|" >
     </p>
     <p th:if="${userName} and ${passwordChanges}"
-       th:text="|Hasło zostało zmienione dla użytkownika <strong>${userName}</strong> |" >
+       th:utext="|Hasło zostało zmienione dla użytkownika <strong>${userName}</strong> |" >
+    </p>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<!--AclEntry-->
+
+<div th:fragment="aclAlert" th:if="${aclEntryName}" class="alert alert-dismissible fade show"
+     th:classappend="${save} ? 'alert-success' : 'alert-danger' "
+     role="alert" xmlns:th="http://www.w3.org/1999/xhtml">
+    <p th:if="${aclEntryName} and ${save} and ${isUser}"
+       th:utext="|Zapisano uprawnienie dla użytkownika <strong>${aclEntryName}</strong> dla uprawnienia <strong>${aclEntryPermission}</strong>.|" >
+    <p th:if="${aclEntryName} and ${save} and not ${isUser}"
+       th:utext="|Zapisano uprawnienie dla użytkowników z przypisaną rolą <strong>${aclEntryName}</strong> dla uprawnienia <strong>${aclEntryPermission}</strong>.|" >
+
+
+    <p th:if="${aclEntryName} and ${remove} and ${isUser}"
+       th:utext="|Uprawnienie dla użytkownika <strong>${aclEntryName}</strong> dla uprawnienia <strong>${aclEntryPermission}</strong> zostało usunięte.|" >
+    </p>
+    <p th:if="${aclEntryName} and ${remove} and not ${isUser}"
+       th:utext="|Uprawnienie dla użytkowników z przypisaną rolą <strong>${aclEntryName}</strong> dla uprawnienia <strong>${aclEntryPermission} zostało usunięte.|" >
     </p>
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>

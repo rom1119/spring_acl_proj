@@ -13,7 +13,7 @@ public class AclObjectDomainService implements IAclObjectDomainService {
     private AclObjectIdentityRepository objectIdentityRepository;
 
     @Override
-    public AclObjectIdentity chackAccessObjectDomain(ResourceInterface obj) {
+    public AclObjectIdentity checkAccessObjectDomain(ResourceInterface obj) {
         return objectIdentityRepository.findByObjectIdAndClassName(String.valueOf(obj.getId()), obj.getClass().getName());
     }
 }

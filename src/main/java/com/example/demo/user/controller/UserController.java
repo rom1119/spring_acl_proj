@@ -1,6 +1,5 @@
 package com.example.demo.user.controller;
 
-import com.example.demo.acl.config.CustomUserDetails;
 import com.example.demo.acl.model.AclEntry;
 import com.example.demo.acl.model.AclEntryDto;
 import com.example.demo.acl.model.AclSecurityID;
@@ -22,30 +21,23 @@ import com.example.demo.main.service.StorageManager;
 import com.example.demo.user.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.domain.AccessControlEntryImpl;
 import org.springframework.security.acls.model.AccessControlEntry;
-import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.annotation.PreDestroy;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Controller
 @RequestMapping(path=UserController.mainPath)
@@ -204,10 +196,11 @@ public class UserController {
 
     }
 
-    @PreAuthorize("hasPermission(#user, 'DELETE')")
     @RequestMapping(path = "/{id}/delete", method = RequestMethod.GET)
     public String delete(@PathVariable Long id, RedirectAttributes attributes) throws IOException {
+        System.out.println("raz");
         User user = userService.findByIdToDelete(id);
+        System.out.println("dwa");
         if (user == null) {
             throw new ResourceNotFoundException("Nie znaleziono strony");
         }
@@ -308,12 +301,15 @@ public class UserController {
 
         User user = userService.findByIdToAdministration(id);
 
-        aclService.createAclEntry(entity, user.getClass(), id);
+        AccessControlEntry aclEntry = aclService.createAclEntry(entity, user.getClass(), id);
 
 //        System.out.println(user.getId());
 
-        attributes.addFlashAttribute("saveAclEntry", true);
-        attributes.addFlashAttribute("securityId", entity.getSecurityID().getSid());
+        attributes.addFlashAttribute("save", true);
+        attributes.addFlashAttribute("aclEntryName", aclService.getSidName(aclEntry));
+        attributes.addFlashAttribute("aclEntryPermission", aclService.getPermissionName(aclEntry.getPermission()));
+        attributes.addFlashAttribute("isUser", aclService.isUserSid(aclEntry));
+
         attributes.addAttribute("id", id);
         return redirectTo(mainPath + "/{id}");
 
@@ -329,9 +325,11 @@ public class UserController {
         User user = userService.findByIdToAdministration(targetSecuredObjectId);
 
         if (user == null) {
-
             throw new ResourceNotFoundException("Nie znaleziono strony");
         }
+
+        aclObjectDomainService.checkAccessObjectDomain(user);
+
         AccessControlEntry aclEntry = aclEntryService.getAce(user, aclEntryIndex)
                 .orElseThrow(() -> new ResourceNotFoundException("Nie znaleziono strony"));
         AclEntryDto aclEntryDto = aclEntryService.prepareToEdit(aclEntry);
@@ -359,7 +357,11 @@ public class UserController {
 
         User user = userService.findByIdToAdministration(targetSecuredObjectId);
 
-        aclObjectDomainService.chackAccessObjectDomain(user);
+        if (user == null) {
+            throw new ResourceNotFoundException("Nie znaleziono strony");
+        }
+
+        aclObjectDomainService.checkAccessObjectDomain(user);
 
         if (result.hasErrors()) {
             Map<String, Permission> availablePermission = aclService.getAvailablePermission();
@@ -384,11 +386,38 @@ public class UserController {
 
         attributes.addFlashAttribute("save", true);
         attributes.addFlashAttribute("aclEntryName", aclService.getSidName(accessControlEntry));
+        attributes.addFlashAttribute("aclEntryPermission", aclService.getPermissionName(accessControlEntry.getPermission()));
+        attributes.addFlashAttribute("isUser", aclService.isUserSid(accessControlEntry));
+
         attributes.addAttribute("id", user.getId());
         return redirectTo(mainPath + "/{id}");
 
     }
 
+    @RequestMapping(path = "/{targetSecuredObjectId}/acl_entry/{aclEntryIndex}/delete", method = RequestMethod.GET)
+    public String deleteAclEntry(
+            @Param("targetSecuredObjectId") @PathVariable Long targetSecuredObjectId,
+            @Param("aclEntryIndex") @PathVariable int aclEntryIndex,
+            RedirectAttributes attributes,
+            Model model) throws IllegalAccessException {
+        User user = userService.findByIdToAdministration(targetSecuredObjectId);
+
+        if (user == null) {
+            throw new ResourceNotFoundException("Nie znaleziono strony");
+        }
+
+        aclObjectDomainService.checkAccessObjectDomain(user);
+
+        AccessControlEntry accessControlEntry = aclService.deleteAclEntry(aclEntryIndex, user);
+
+        attributes.addFlashAttribute("remove", true);
+        attributes.addFlashAttribute("aclEntryName", aclService.getSidName(accessControlEntry));
+        attributes.addFlashAttribute("aclEntryPermission", aclService.getPermissionName(accessControlEntry.getPermission()));
+        attributes.addFlashAttribute("isUser", aclService.isUserSid(accessControlEntry));
+
+        attributes.addAttribute("id", user.getId());
+        return redirectTo(mainPath + "/{id}");
+    }
 
     private String pathToView(String view)
     {

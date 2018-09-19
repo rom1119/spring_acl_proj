@@ -7,6 +7,8 @@
 <body>
 
 <section layout:fragment="content" class="container">
+    <div th:replace="alerts.html :: aclAlert" ></div>
+
     <div class="card border-primary mb-3" style="max-width: 18rem;" th:object="${entity}">
         <div class="card-header" th:text="|*{userDetails.firstName} *{userDetails.lastName}|">Header</div>
         <div class="card-body text-primary">
@@ -14,8 +16,8 @@
             <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
         </div>
     </div>
-    <a th:href="@{/user/{id}/acl_entry/new (id=${entity.id})}" class="btn btn-outline-success my-2 my-sm-0">Dodaj zabezpieczenie</a>
-    <div th:replace="parts.html :: aclList(entities=${aclEntryList}, targetSecuredObjectId=${entity.id})" ></div>
+    <a th:if="${#arrays.length(@userService.getOneToAdministration(entity)) > 0}" th:href="@{/user/{id}/acl_entry/new (id=${entity.id})}" class="btn btn-outline-success my-2 my-sm-0">Dodaj zabezpieczenie</a>
+    <div th:if="${#arrays.length(@userService.getOneToAdministration(entity)) > 0}" th:replace="parts.html :: aclList(entities=${aclEntryList}, targetSecuredObjectId=${entity.id})" ></div>
 </section>
 
 

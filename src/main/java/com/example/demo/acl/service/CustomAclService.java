@@ -191,7 +191,7 @@ public class CustomAclService {
     }
 
 
-    public void createAclEntry(AclEntry entity, Class<?> aClass, Long id) throws IllegalAccessException {
+    public AccessControlEntry createAclEntry(AclEntry entity, Class<?> aClass, Long id) throws IllegalAccessException {
         MutableAcl acl = getAcl(aClass, id);
 
         Sid sid = getSidFromName(entity.getSecurityID().getSid());
@@ -200,27 +200,50 @@ public class CustomAclService {
 
 // Now grant some permissions via an access control entry (ACE)
         acl.insertAce(acl.getEntries().size(), permission, sid, entity.isGranting());
+        AccessControlEntry accessControlEntry = acl.getEntries().get(acl.getEntries().size() - 1);
 //        acl.updateAu(, );
         aclService.updateAcl(acl);
+
+        return accessControlEntry;
     }
 
     public AccessControlEntry updateAclEntry(AclEntry entity,int indexAce, ResourceInterface objDomain) throws IllegalAccessException {
 
         MutableAcl acl = getAcl(objDomain.getClass(), objDomain.getId());
+        AccessControlEntry accessControlEntry = acl.getEntries().get(indexAce);
         acl.updateAce(indexAce, getPermissionFromMask(entity.getMask()));
         aclService.updateAcl(acl);
+
+        return accessControlEntry;
+    }
+
+    public AccessControlEntry deleteAclEntry(int indexAce, ResourceInterface objDomain)
+    {
+        MutableAcl acl = getAcl(objDomain.getClass(), objDomain.getId());
         AccessControlEntry accessControlEntry = acl.getEntries().get(indexAce);
+
+        acl.deleteAce(indexAce);
+
+        aclService.updateAcl(acl);
 
         return accessControlEntry;
     }
 
     public String getSidName(AccessControlEntry accessControlEntry) {
-        if (accessControlEntry.getSid() instanceof PrincipalSid) {
+        if (isUserSid(accessControlEntry)) {
             return ((PrincipalSid) accessControlEntry.getSid()).getPrincipal();
-        } else if (accessControlEntry.getSid() instanceof GrantedAuthoritySid) {
-            return ((GrantedAuthoritySid) accessControlEntry.getSid()).getGrantedAuthority();
         }
 
-        return null;
+        return ((GrantedAuthoritySid) accessControlEntry.getSid()).getGrantedAuthority();
+
+    }
+
+    public boolean isUserSid(AccessControlEntry accessControlEntry)
+    {
+        if (accessControlEntry.getSid() instanceof PrincipalSid) {
+            return true;
+        }
+
+        return false;
     }
 }

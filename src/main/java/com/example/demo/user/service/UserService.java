@@ -157,15 +157,8 @@ public class UserService implements IUserService {
         return getOneToChangePassword(user).size() > 0;
     }
 
-
-    @Override
-    public List<User> getOneToChangePassword(User user) {
-        User toEdit = findByIdToChangePassword(user.getId());
-        return Arrays.asList(toEdit);
-    }
-
-    @Override
-    public List<User> getOneToEdit(User user) {
+    private List<User> getOneMethod(User user)
+    {
         User toEdit = findOne(user.getId());
         List<User> arr = new ArrayList<>();
         if (toEdit != null) {
@@ -175,18 +168,23 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<User> getOneToDelete(User user) {
-        User toEdit = findOne(user.getId());
-        return Arrays.asList(toEdit);
+    public List<User> getOneToChangePassword(User user) {
+        return getOneMethod(user);
     }
 
+    @Override
+    public List<User> getOneToEdit(User user) {
+        return getOneMethod(user);
+    }
 
-
+    @Override
+    public List<User> getOneToDelete(User user) {
+        return getOneMethod(user);
+    }
 
     @Override
     public List<User> getOneToAdministration(User user) {
-        User toEdit = findOne(user.getId());
-        return Arrays.asList(toEdit);
+        return getOneMethod(user);
     }
 
     private boolean emailExist(String email) {
