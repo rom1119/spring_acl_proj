@@ -1,5 +1,6 @@
 package com.example.demo.user.service;
 
+import com.example.demo.acl.service.IAclService;
 import com.example.demo.user.exception.EmailExistsException;
 import com.example.demo.user.model.User;
 import com.example.demo.user.model.UserDto;
@@ -11,7 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.List;
 import java.util.Optional;
 
-public interface IUserService {
+public interface IUserService extends IAclService<User> {
 
     User registerNewUserAccount(UserDto accountDto)
             throws EmailExistsException;
@@ -35,6 +36,7 @@ public interface IUserService {
     @PostAuthorize("isOwner(returnObject) ")
     User findByIdToChangePassword(Long id);
 
+    @Override
     @PostAuthorize("hasPermission(returnObject, 'ADMINISTRATION') or isOwner(returnObject)")
     User findByIdToAdministration(Long id);
 

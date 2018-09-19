@@ -1,5 +1,6 @@
 package com.example.demo.user.model;
 
+import com.example.demo.acl.model.AclResourceInterface;
 import com.example.demo.main.model.ResourceInterface;
 import com.example.demo.user.eventListener.UserEntityListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -23,7 +24,7 @@ import java.util.Set;
 //@JsonIgnoreProperties({"id", "firstName"})
 //@JsonPropertyOrder({ "name", "id" })
 @Secured("USER_OWNER")
-public class User implements ResourceInterface {
+public class User implements ResourceInterface, AclResourceInterface {
 
     @Id
 //    @GeneratedValue(generator = "uuid")

@@ -1,6 +1,7 @@
 package com.example.demo.acl.service;
 
 import com.example.demo.acl.model.AclObjectIdentity;
+import com.example.demo.acl.model.AclResourceInterface;
 import com.example.demo.acl.repository.AclObjectIdentityRepository;
 import com.example.demo.main.model.ResourceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ public class AclObjectDomainService implements IAclObjectDomainService {
     private AclObjectIdentityRepository objectIdentityRepository;
 
     @Override
-    public AclObjectIdentity checkAccessObjectDomain(ResourceInterface obj) {
+    public AclObjectIdentity checkAccessObjectDomain(AclResourceInterface obj) {
         return objectIdentityRepository.findByObjectIdAndClassName(String.valueOf(obj.getId()), obj.getClass().getName());
     }
 }

@@ -4,6 +4,7 @@ import com.example.demo.acl.config.AclConfig;
 import com.example.demo.acl.config.CustomUserDetails;
 import com.example.demo.acl.model.AclEntry;
 import com.example.demo.acl.model.AclObjectIdentity;
+import com.example.demo.acl.model.AclResourceInterface;
 import com.example.demo.acl.model.AclSecurityID;
 import com.example.demo.acl.repository.AclEntryRepository;
 import com.example.demo.acl.repository.AclObjectIdentityRepository;
@@ -207,7 +208,7 @@ public class CustomAclService {
         return accessControlEntry;
     }
 
-    public AccessControlEntry updateAclEntry(AclEntry entity,int indexAce, ResourceInterface objDomain) throws IllegalAccessException {
+    public AccessControlEntry updateAclEntry(AclEntry entity, int indexAce, AclResourceInterface objDomain) throws IllegalAccessException {
 
         MutableAcl acl = getAcl(objDomain.getClass(), objDomain.getId());
         AccessControlEntry accessControlEntry = acl.getEntries().get(indexAce);
@@ -217,7 +218,7 @@ public class CustomAclService {
         return accessControlEntry;
     }
 
-    public AccessControlEntry deleteAclEntry(int indexAce, ResourceInterface objDomain)
+    public AccessControlEntry deleteAclEntry(int indexAce, AclResourceInterface objDomain)
     {
         MutableAcl acl = getAcl(objDomain.getClass(), objDomain.getId());
         AccessControlEntry accessControlEntry = acl.getEntries().get(indexAce);
