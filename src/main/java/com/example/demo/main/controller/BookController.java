@@ -1,11 +1,16 @@
 package com.example.demo.main.controller;
 
+import com.example.demo.acl.controller.AbstractAclController;
 import com.example.demo.main.model.Book;
 import com.example.demo.main.repository.BookRepository;
 import com.example.demo.acl.service.CustomAclService;
+import com.example.demo.main.service.BookService;
+import com.example.demo.user.exception.ResourceNotFoundException;
+import com.example.demo.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.acls.model.AccessControlEntry;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,9 +26,9 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping(path = BookController.mainPath)
-public class BookController {
+public class BookController extends AbstractAclController<Book> {
 
-    private static final String pathToViews = "main/book/";
+    protected static final String pathToViews = "main/book/";
     public static final String mainPath = "book";
 
     @Autowired
@@ -31,6 +36,9 @@ public class BookController {
 
     @Autowired
     private CustomAclService aclService;
+
+    @Autowired
+    private BookService bookService;
 
 
 //    @Autowired
@@ -50,6 +58,19 @@ public class BookController {
         return pathToView("list");
     }
 
+    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
+    public String getOne(@PathVariable Long id, Model model)
+    {
+        Optional<Book> user = Optional.ofNullable(bookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Nie znaleziono strony")));
+
+        List<AccessControlEntry> aclEntries = aclService.getAclEntries(user.get().getClass(), user.get().getId());
+//        aclEntries.get(0).
+        model.addAttribute("entity", user.get());
+        model.addAttribute("aclEntryList", aclEntries);
+        return pathToView("show");
+    }
+
+    @PreAuthorize("hasAuthority('WRITE_PRIVILEGE')")
     @RequestMapping(path = "/{id}/new", method = RequestMethod.GET)
     public String createView(Model model)
     {
@@ -60,7 +81,7 @@ public class BookController {
         return pathToView("new");
     }
 
-    @PreAuthorize("hasPermission(#entity, 'AUDIT')")
+    @PreAuthorize("hasAuthority('WRITE_PRIVILEGE')")
     @RequestMapping(path = "/new", method = RequestMethod.POST)
     public String createProccess(@Param("entity") @Valid @ModelAttribute Book entity,
                                  BindingResult result,
@@ -84,7 +105,7 @@ public class BookController {
     @RequestMapping(path = "/{id}/edit", method = RequestMethod.GET)
     public String editView(@PathVariable int id, Model model)
     {
-        Optional<Book> entity = bookRepository.findById((long) id);
+        Book entity = bookService.findByIdToEdit((long) id);
         model.addAttribute("entity", entity);
 
         return pathToView("edit");
@@ -94,6 +115,7 @@ public class BookController {
     @RequestMapping(path = "/edit", method = RequestMethod.POST)
     public String editProccess(@Param("entity") @ModelAttribute Book entity, RedirectAttributes redirectAttributes)
     {
+        bookService.findByIdToEdit(entity.getId());
 
         bookRepository.save(entity);
         redirectAttributes.addFlashAttribute("edited", true);
@@ -101,13 +123,33 @@ public class BookController {
         return redirectToIndex();
     }
 
-    private String pathToView(String view)
+    @Override
+    protected String pathToView(String view)
     {
-        return pathToViews + view;
+        return getPathToViews() + view;
     }
 
-    private String redirectToIndex()
+    @Override
+    protected String redirectToIndex()
     {
-        return "redirect:/" + mainPath;
+        return redirectTo(mainPath);
+    }
+
+    @Override
+    protected String redirectTo(String partPath)
+    {
+        return "redirect:/" + partPath;
+    }
+
+    @Override
+    protected String getMainPath()
+    {
+        return mainPath;
+    }
+
+    @Override
+    protected String getPathToViews()
+    {
+        return pathToViews;
     }
 }

@@ -230,6 +230,15 @@ public class CustomAclService {
         return accessControlEntry;
     }
 
+    public String getSidNameOwnerFromAcl(Acl acl) {
+        if (acl.getOwner() instanceof PrincipalSid) {
+            return ((PrincipalSid) acl.getOwner()).getPrincipal();
+        }
+
+        return ((GrantedAuthoritySid) acl.getOwner()).getGrantedAuthority();
+
+    }
+
     public String getSidName(AccessControlEntry accessControlEntry) {
         if (isUserSid(accessControlEntry)) {
             return ((PrincipalSid) accessControlEntry.getSid()).getPrincipal();

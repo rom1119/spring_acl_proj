@@ -1,5 +1,6 @@
 package com.example.demo.acl.config;
 
+import com.example.demo.acl.service.CustomAclService;
 import com.example.demo.user.repository.UserRepository;
 import org.aopalliance.intercept.MethodInvocation;
 import org.modelmapper.ModelMapper;
@@ -16,21 +17,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurityExpressionHandler
 {
-        private AuthenticationTrustResolver trustResolver =
+    private AuthenticationTrustResolver trustResolver =
                 new AuthenticationTrustResolverImpl();
 
-        private UserRepository userRepository;
-
-        private ModelMapper modelMapper;
-
-        private CustomMethodSecurityExpressionRoot root;
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
-    public CustomMethodSecurityExpressionHandler(UserRepository userRepository, ModelMapper modelMapper) {
-        super();
-        this.userRepository = userRepository;
-        this.modelMapper = modelMapper;
-    }
+    private ModelMapper modelMapper;
+
+    @Autowired
+    private CustomAclService aclService;
+
+    private CustomMethodSecurityExpressionRoot root;
+
 
     @Override
     protected MethodSecurityExpressionOperations createSecurityExpressionRoot(
@@ -44,6 +44,7 @@ public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurity
         root.setRoleHierarchy(getRoleHierarchy());
         root.setUserRepository(userRepository);
         root.setModelMapper(modelMapper);
+        root.setAclService(aclService);
 
 //            System.out.println("LLL");
 //            System.out.println(userRepository);

@@ -1,10 +1,12 @@
 package com.example.demo.main.model;
 
+import com.example.demo.acl.model.AclResourceInterface;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "book")
-public class Book implements ResourceInterface, Nameable {
+public class Book implements ResourceInterface, Nameable, AclResourceInterface {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -62,4 +64,5 @@ public class Book implements ResourceInterface, Nameable {
     public void setDescription(String description) {
         this.description = description;
     }
+
 }

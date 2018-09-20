@@ -8,12 +8,14 @@
 
 <section layout:fragment="content" class="container">
     <div class="card border-primary mb-3" style="max-width: 18rem;" th:object="${entity}">
-        <div class="card-header" th:text="|*{firstName} *{lastName}|">Header</div>
+        <div class="card-header" th:text="|Autor: *{author}|">Header</div>
         <div class="card-body text-primary">
-            <h5 class="card-title"  th:text="*{email}">Primary card title</h5>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <h5 class="card-title"  th:text="*{name}">Primary card title</h5>
+            <p class="card-text" th:text="*{description}">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
         </div>
     </div>
+    <a th:if="${#arrays.length(@bookService.getOneToAdministration(entity)) > 0}" th:href="@{/book/{id}/acl_entry/new (id=${entity.id})}" class="btn btn-outline-success my-2 my-sm-0">Dodaj zabezpieczenie</a>
+    <div th:if="${#arrays.length(@bookService.getOneToAdministration(entity)) > 0}" th:replace="parts.html :: aclList(entities=${aclEntryList}, targetSecuredObjectId=${entity.id})" ></div>
 </section>
 <footer>
     <p layout:fragment="custom-footer">This is some footer content from content page 1</p>

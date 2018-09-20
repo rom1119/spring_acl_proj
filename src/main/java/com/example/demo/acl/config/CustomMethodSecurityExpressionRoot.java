@@ -1,7 +1,9 @@
 package com.example.demo.acl.config;
 
 import com.example.demo.acl.model.AclObjectIdentity;
+import com.example.demo.acl.model.AclResourceInterface;
 import com.example.demo.acl.model.AclSecurityID;
+import com.example.demo.acl.service.CustomAclService;
 import com.example.demo.user.model.User;
 import com.example.demo.user.model.UserDto;
 import com.example.demo.user.repository.UserRepository;
@@ -11,6 +13,8 @@ import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.acls.model.MutableAcl;
+import org.springframework.security.acls.model.Sid;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -22,6 +26,9 @@ public class CustomMethodSecurityExpressionRoot extends SecurityExpressionRoot i
     private UserRepository userRepository;
 
     private ModelMapper modelMapper;
+
+    private CustomAclService aclService;
+
     private Object filterObject;
     private Object returnObject;
     private Object target;
@@ -55,17 +62,22 @@ public class CustomMethodSecurityExpressionRoot extends SecurityExpressionRoot i
         if (object instanceof User || object instanceof UserDto ) {
             return checkUser(object);
 
-        } else if (object instanceof AclObjectIdentity) {
-            return checkAclObjectIdentity((AclObjectIdentity) object);
+        } else {
+            return checkAclObjectIdentity((AclResourceInterface) object);
         }
 
-        return false;
     }
 
-    private boolean checkAclObjectIdentity(AclObjectIdentity object) {
-        AclSecurityID sid = object.getOwner();
+    private boolean checkAclObjectIdentity(AclResourceInterface object) {
+        MutableAcl acl = aclService.getAcl(object.getClass(), object.getId());
 
-        return ((CustomUserDetails) authentication.getPrincipal()).getUsername().equalsIgnoreCase(sid.getSid());
+        String sidNameOwnerFromAcl = aclService.getSidNameOwnerFromAcl(acl);
+
+        if (!(authentication.getPrincipal() instanceof CustomUserDetails)) {
+            return  false;
+        }
+
+        return ((CustomUserDetails) authentication.getPrincipal()).getUsername().equalsIgnoreCase(sidNameOwnerFromAcl);
     }
 
     private boolean checkUser(Object o)
@@ -145,5 +157,13 @@ public class CustomMethodSecurityExpressionRoot extends SecurityExpressionRoot i
 
     public void setModelMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
+    }
+
+    public CustomAclService getAclService() {
+        return aclService;
+    }
+
+    public void setAclService(CustomAclService aclService) {
+        this.aclService = aclService;
     }
 }

@@ -31,7 +31,8 @@
             <td th:text="*{description}">kowalski@wp.pl</td>
             <td>
                 <a th:href="@{/book/{id}(id=*{id})}" class="btn btn-outline-success btn-sm">Zobacz szczegóły</a>
-                <a th:href="@{/book/{id}/edit(id=*{id})}" class="btn btn-outline-success btn-sm">Edytuj</a>
+                <a th:href="@{/book/{id}/edit(id=*{id})}" th:if="${#arrays.length(@bookService.getOneToEdit(entity)) > 0}"  class="btn btn-outline-success btn-sm">Edytuj</a>
+
                 <!--<a th:href="@{/user/{id}/delete(id=*{id})}" sec:authorize="hasPermission(#vars.entity,'OWNER')" class="btn btn-outline-danger btn-sm">Usuń</a>-->
 
             </td>
