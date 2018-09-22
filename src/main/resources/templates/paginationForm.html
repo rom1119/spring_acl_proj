@@ -1,0 +1,11 @@
+<form th:fragment="paginationForm (mainPath, searchForm, page, size, isDropdown, label)" th:action="${mainPath}" th:object="${searchForm}" xmlns:th="http://www.w3.org/1999/xhtml" th:method="get" class="form-inline my-2 my-lg-0">
+    <input class="form-control mr-sm-2" name="size" type="hidden" th:value="${size}" aria-label="size">
+    <!--<input th:if="${isDropdown}" class="form-control mr-sm-2" th:field="*{page}" type="hidden" th:value="${page}" aria-label="size">-->
+    <input class="form-control mr-sm-2" name="page" type="hidden" th:value="${page}" aria-label="size">
+    <input class="form-control mr-sm-2" th:field="*{term}" type="hidden" aria-label="Search">
+
+    <button th:classappend="${isDropdown} ? 'dropdown-item' : 'page-link'" type="submit" th:text="${label}">
+        Wyszukaj
+        <span th:if="*{page} == ${page}" class="sr-only">(current)</span>
+    </button>
+</form>

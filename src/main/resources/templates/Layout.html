@@ -43,10 +43,6 @@
                 </li>
 
             </ul>
-            <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active" sec:authorize="not isAuthenticated()">
                     <a class="nav-link" th:href="@{/login}">Zaloguj się <span class="sr-only">(current)</span></a>
@@ -72,6 +68,7 @@
     <p layout:fragment="custom-footer">Custom footer here</p>
 </footer>
 <script th:src="@{/static/bower_components/jquery/dist/jquery.min.js}"></script>
+<script th:src="@{/static/bower_components/popper.js/dist/umd/popper.min.js}"></script>
 <script th:src="@{/static/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
 </body>
 </html>

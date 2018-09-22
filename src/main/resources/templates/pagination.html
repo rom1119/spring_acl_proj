@@ -1,0 +1,33 @@
+<nav th:fragment="pagination (countPages, searchForm, availableCountPages, mainPath)" class="text-center row" xmlns:th="http://www.w3.org/1999/xhtml">
+    <div class="dropdown col-5">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Ilość wyników
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <div th:each="el : ${availableCountPages}" class="dropdown-item"  >
+                <div th:replace="paginationForm.html :: paginationForm(mainPath=${mainPath}, searchForm=${searchForm}, page=0, size=${el}, isDropdown=${true}, label=${el})"></div>
+            </div>
+
+        </div>
+    </div>
+    <ul class="pagination">
+        <li th:if="${searchForm.page} > 0" class="page-item" >
+            <div th:replace="paginationForm.html :: paginationForm(mainPath=${mainPath}, searchForm=${searchForm}, page=${searchForm.page} - 1, size=${searchForm.size}, isDropdown=${false}, label='Poprzednia')" ></div>
+        </li>
+        <li th:unless="${searchForm.page} > 0" class="page-item disabled" >
+            <a class="page-link" href="#" tabindex="-1">Poprzednia</a>
+        </li>
+
+        <li class="page-item" th:classappend="${searchForm.page} == ${page} ? 'active' : ''" th:each="page : ${#numbers.sequence(0, countPages - 1)}">
+            <div th:replace="paginationForm.html :: paginationForm(mainPath=${mainPath}, searchForm=${searchForm}, page=${page}, size=${searchForm.size}, isDropdown=false, label=${page} + 1)" ></div>
+        </li>
+
+        <li th:if="${searchForm.page} < ${countPages} - 1 and ${countPages} > 1" class="page-item">
+            <div th:replace="paginationForm.html :: paginationForm(mainPath=${mainPath}, searchForm=${searchForm}, page=${searchForm.page} + 1, size=${searchForm.size}, isDropdown=${false}, label='Następna')" ></div>
+        </li>
+        <li th:unless="${searchForm.page} < ${countPages} - 1 and ${countPages} > 1" class="page-item disabled" >
+            <a class="page-link" href="#" tabindex="+1">Następna</a>
+        </li>
+    </ul>
+
+</nav>

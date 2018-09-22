@@ -1,6 +1,7 @@
 package com.example.demo.main.controller;
 
 import com.example.demo.acl.controller.AbstractAclController;
+import com.example.demo.main.form.SearchForm;
 import com.example.demo.main.model.Book;
 import com.example.demo.main.repository.BookRepository;
 import com.example.demo.acl.service.CustomAclService;
@@ -8,28 +9,40 @@ import com.example.demo.main.service.BookService;
 import com.example.demo.user.exception.ResourceNotFoundException;
 import com.example.demo.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.model.AccessControlEntry;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.data.domain.Pageable;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.beans.support.PagedListHolder.DEFAULT_PAGE_SIZE;
+
 @Controller
 @RequestMapping(path = BookController.mainPath)
+@PropertySource("classpath:application.properties")
 public class BookController extends AbstractAclController<Book> {
 
     protected static final String pathToViews = "main/book/";
     public static final String mainPath = "book";
+    private static final int DEFAULT_PAGE_NUMBER = 0;
+
+    @Value( "${app.availableCountPages}" )
+    private String AVAILABLE_COUNT_PAGES;
 
     @Autowired
     private BookRepository bookRepository;
@@ -40,20 +53,26 @@ public class BookController extends AbstractAclController<Book> {
     @Autowired
     private BookService bookService;
 
-
-//    @Autowired
-//    public BookController(BookRepository bookRepository, AclService aclService) {
-//        this.bookRepository = bookRepository;
-//        this.asdasd = aclService;
-//    }
-
-
     @RequestMapping( method = RequestMethod.GET)
-    public String getBooks(Model model)
+    public String getBooks(Model model,
+//               @SortDefault.SortDefaults({
+//                       @SortDefault(sort = "name", direction = Sort.Direction.ASC),
+//               })
+               @Valid @ModelAttribute SearchForm searchForm,
+               @PageableDefault(page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE) Pageable pageable
+                )
     {
-        List<Book> books = bookRepository.findAll();
+        Page<Book> books = null;
+        if (searchForm.getTerm() == null) {
+            books = bookRepository.findAll(pageable);
+        } else {
+            books = bookRepository.findBySearchTerm(searchForm.getTerm(), pageable);
+        }
 
         model.addAttribute("entities", books);
+        model.addAttribute("countPages", books.getTotalPages());
+        model.addAttribute("searchForm", searchForm);
+        model.addAttribute("availableCountPages", AVAILABLE_COUNT_PAGES.split(","));
 
         return pathToView("list");
     }

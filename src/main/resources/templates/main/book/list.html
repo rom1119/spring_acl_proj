@@ -11,6 +11,8 @@
 <section layout:fragment="content" class="container">
     <h3 th:if="${removed}" th:text="|Książka '${name}' została usunięta|">Usunięto</h3>
     <h3 th:if="${edited}" th:text="|Książka '${name}' została zapisana|">Zapisano</h3>
+    <div th:replace="search.html :: search(searchForm=${searchForm}, mainPath=@{/book})" ></div>
+
     <table class="table">
         <caption>List of users</caption>
         <thead>
@@ -20,6 +22,7 @@
             <th scope="col">Nazwa</th>
             <th scope="col">Autor</th>
             <th scope="col">Opis</th>
+            <th scope="col">Akcje</th>
         </tr>
         </thead>
         <tbody>
@@ -39,6 +42,8 @@
         </tr>
         </tbody>
     </table>
+    <div th:replace="pagination.html :: pagination(countPages=${countPages}, searchForm=${searchForm}, availableCountPages=${availableCountPages}, mainPath=@{/book})" ></div>
+
 </section>
 <footer>
     <p layout:fragment="custom-footer">This is some footer content from content page 1</p>
