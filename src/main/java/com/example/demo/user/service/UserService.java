@@ -1,9 +1,8 @@
 package com.example.demo.user.service;
 
-import com.example.demo.acl.config.CustomPermission;
-import com.example.demo.acl.config.CustomUserDetails;
 import com.example.demo.acl.service.CustomAclService;
 import com.example.demo.user.exception.EmailExistsException;
+import com.example.demo.user.model.CustomUserDetails;
 import com.example.demo.user.model.User;
 import com.example.demo.user.model.UserDetails;
 import com.example.demo.user.model.UserDto;
@@ -11,11 +10,10 @@ import com.example.demo.user.repository.RoleRepository;
 import com.example.demo.user.repository.UserDetailsRepository;
 import com.example.demo.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.security.acls.domain.ObjectIdentityImpl;
-import org.springframework.security.acls.model.Acl;
-import org.springframework.security.acls.model.MutableAclService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,9 +24,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService implements IUserService {
@@ -41,11 +37,6 @@ public class UserService implements IUserService {
 
     @Autowired
     private RoleRepository roleRepository;
-
-    @Autowired
-    private EntityManagerFactory emf;
-
-    private Authentication authentication;
 
     @Autowired
     private CustomAclService aclService;
@@ -111,9 +102,74 @@ public class UserService implements IUserService {
         return null;
     }
 
+
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public Page<User> findAll(CustomUserDetails userdetails, Pageable pageable) {
+        Permission read = BasePermission.READ;
+        return userRepository.findAllCustomPageable(User.class.getName(), userdetails.getUser().getEmail(), read.getMask(), pageable);
+    }
+
+    @Override
+    public Page<User> findBySearchTerm(CustomUserDetails user, String term, Pageable pageable) {
+        Permission read = BasePermission.READ;
+        return userRepository.findBySearchTermPageable(User.class.getName(), user.getUser().getEmail(), read.getMask(), term, pageable);
+
+    }
+
+    public User[] filterAccessibleElements(Page<User> els, Pageable pageable)
+    {
+        User[] res = new User[pageable.getPageSize()];
+
+        System.out.println(els.getContent().size());
+        for(int i = 0; i < els.getContent().size(); i++) {
+            res[i] = els.getContent().get(i);
+        }
+        return res;
+    }
+
+    @Override
+    public List<User> findToPage(String term, Pageable pageable) {
+
+        return searchWhileIsFullPage(term, pageable);
+    }
+
+    private List<User> searchWhileIsFullPage(String term, Pageable pageable)
+    {
+//        List<User> res = new ArrayList<>();
+//        int currentPage = pageable.getPageNumber();
+//        Pageable pageableToFind = PageRequest.of(currentPage, pageable.getPageSize());
+//        Page<User> page = null;
+//
+//        while(res.size() < pageable.getPageSize()) {
+//            User[] users = null;
+//            if (term == null) {
+//                page = findAll(pageableToFind);
+//            } else {
+//                if(term.isEmpty()) {
+//                    page = findAll(pageableToFind);
+//                } else {
+//                    page = findBySearchTerm(term, pageableToFind);
+//                }
+//
+//            }
+//            users = filterAccessibleElements(page, pageable);
+//
+//            for (int i = 0; i < users.length; i++) {
+//                if (res.size() == pageable.getPageSize()) {
+//                    res.add(users[i]);
+//                }
+//            }
+//
+//            if (currentPage < page.getTotalPages()) {
+//                currentPage++;
+//            } else {
+//                return res;
+//            }
+//        }
+//
+//        return res;
+
+        return null;
     }
 
     @Override
@@ -199,11 +255,4 @@ public class UserService implements IUserService {
         return userRepository.findById(id).get();
     }
 
-    public Authentication getAuthentication() {
-        return authentication;
-    }
-
-    public void setAuthentication(Authentication authentication) {
-        this.authentication = authentication;
-    }
 }

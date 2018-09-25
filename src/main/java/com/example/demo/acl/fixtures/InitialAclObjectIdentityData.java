@@ -1,6 +1,6 @@
 package com.example.demo.acl.fixtures;
 
-import com.example.demo.acl.config.CustomUserDetails;
+import com.example.demo.user.model.CustomUserDetails;
 import com.example.demo.acl.model.AclClass;
 import com.example.demo.acl.model.AclObjectIdentity;
 import com.example.demo.acl.model.AclSecurityID;
@@ -19,7 +19,6 @@ import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 @Component
 @DependsOn({"initialUserData", "initialBookData", "initialAclSecurityIDData"})

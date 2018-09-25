@@ -1,23 +1,19 @@
 package com.example.demo.acl.config;
 
-import com.example.demo.acl.model.AclObjectIdentity;
 import com.example.demo.acl.model.AclResourceInterface;
-import com.example.demo.acl.model.AclSecurityID;
 import com.example.demo.acl.service.CustomAclService;
+import com.example.demo.user.model.CustomUserDetails;
 import com.example.demo.user.model.User;
 import com.example.demo.user.model.UserDto;
 import com.example.demo.user.repository.UserRepository;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.acls.model.MutableAcl;
-import org.springframework.security.acls.model.Sid;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:td="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:sec="http://www.w3.org/1999/xhtml"
       layout:decorate="~{Layout.html}">
 
@@ -9,7 +9,8 @@
 
 
 <section layout:fragment="content" class="container">
-<div th:replace="alerts.html :: userAlert" ></div>
+    <div th:replace="alerts.html :: userAlert" ></div>
+    <div th:replace="search.html :: search(searchForm=${searchForm}, mainPath=@{/user})" ></div>
 
     <table class="table">
         <caption>List of users</caption>
@@ -44,6 +45,7 @@
         </tr>
         </tbody>
     </table>
+    <div th:replace="pagination.html :: pagination(countPages=${countPages}, searchForm=${searchForm}, availableCountPages=${availableCountPages}, mainPath=@{/user})" ></div>
 
 </section>
 <footer>

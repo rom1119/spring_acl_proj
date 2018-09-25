@@ -1,7 +1,5 @@
-package com.example.demo.acl.config;
+package com.example.demo.user.model;
 
-import com.example.demo.user.model.Role;
-import com.example.demo.user.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

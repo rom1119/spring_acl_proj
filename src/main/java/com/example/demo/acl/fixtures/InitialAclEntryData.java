@@ -1,6 +1,6 @@
 package com.example.demo.acl.fixtures;
 
-import com.example.demo.acl.config.CustomUserDetails;
+import com.example.demo.user.model.CustomUserDetails;
 import com.example.demo.acl.model.AclEntry;
 import com.example.demo.acl.model.AclObjectIdentity;
 import com.example.demo.acl.repository.AclEntryRepository;
@@ -11,17 +11,17 @@ import com.example.demo.user.model.User;
 import com.example.demo.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.security.acls.domain.AbstractPermission;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.DataBinder;
 
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import javax.validation.Validator;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 @DependsOn({"initialUserData", "initialBookData", "initialAclSecurityIDData", "initialAclObjectIdentityData", "customAclService"})
@@ -52,14 +52,17 @@ public class InitialAclEntryData {
     @PostConstruct
     @Transactional
     public void init() throws IllegalAccessException {
-        User userToPermission = userRepository.findById(Long.valueOf(3)).get();
-        User objectIdentity = userRepository.findById(Long.valueOf(1)).get();
-        AclEntry aclEntry = createAclEntry(BasePermission.READ, userToPermission, objectIdentity);
+        User userToGivePermission = userRepository.findById(Long.valueOf(3)).get();
 
-//        DataBinder binder = new DataBinder(aclEntry);
-//        binder.validate();
+        List<Integer> userIds = Arrays.asList(1, 2, 4, 5, 9, 11, 12, 13, 14, 15, 17, 19, 20, 21, 22);
 
-        aclEntryRepository.save(aclEntry);
+        userIds.stream().forEach(id -> {
+            User objectIdentity = userRepository.findById(Long.valueOf(id)).get();
+            AclEntry aclEntry = createAclEntry(BasePermission.READ, userToGivePermission, objectIdentity);
+
+            aclEntryRepository.save(aclEntry);
+
+        });
 
     }
 

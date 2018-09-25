@@ -1,15 +1,13 @@
 package com.example.demo.acl.service;
 
 import com.example.demo.acl.config.AclConfig;
-import com.example.demo.acl.config.CustomUserDetails;
+import com.example.demo.user.model.CustomUserDetails;
 import com.example.demo.acl.model.AclEntry;
-import com.example.demo.acl.model.AclObjectIdentity;
 import com.example.demo.acl.model.AclResourceInterface;
 import com.example.demo.acl.model.AclSecurityID;
 import com.example.demo.acl.repository.AclEntryRepository;
 import com.example.demo.acl.repository.AclObjectIdentityRepository;
 import com.example.demo.acl.repository.AclSecurityIDRepository;
-import com.example.demo.main.model.ResourceInterface;
 import com.example.demo.user.model.AuthorityInterface;
 import com.example.demo.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +15,14 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.acls.domain.*;
 import org.springframework.security.acls.model.*;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-@Component
+@Service
 @Order(1)
 public class CustomAclService {
 

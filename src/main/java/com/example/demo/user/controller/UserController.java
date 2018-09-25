@@ -9,10 +9,12 @@ import com.example.demo.acl.repository.AclSecurityIDRepository;
 import com.example.demo.acl.service.AclEntryService;
 import com.example.demo.acl.service.AclObjectDomainService;
 import com.example.demo.acl.service.CustomAclService;
+import com.example.demo.main.form.SearchForm;
 import com.example.demo.main.validation.group.Created;
 import com.example.demo.main.validation.group.Edited;
 import com.example.demo.main.validation.group.PasswordChange;
 import com.example.demo.user.exception.ResourceNotFoundException;
+import com.example.demo.user.model.CustomUserDetails;
 import com.example.demo.user.model.Role;
 import com.example.demo.user.model.User;
 import com.example.demo.user.model.UserDto;
@@ -22,12 +24,20 @@ import com.example.demo.main.service.StorageManager;
 import com.example.demo.user.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.domain.AccessControlEntryImpl;
+import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.model.AccessControlEntry;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -37,15 +47,24 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static org.springframework.beans.support.PagedListHolder.DEFAULT_PAGE_SIZE;
+
 @Controller
 @RequestMapping(path=UserController.mainPath)
+@PropertySource("classpath:application.properties")
 public class UserController extends AbstractAclController<User> {
 
     protected static final String pathToViews = "user/user/";
     public static final String mainPath = "user";
+
+    private static final int DEFAULT_PAGE_NUMBER = 0;
+
+    @Value( "${app.availableCountPages}" )
+    private String AVAILABLE_COUNT_PAGES;
 
     @Autowired
     protected UserRepository userRepository;
@@ -74,15 +93,31 @@ public class UserController extends AbstractAclController<User> {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String getAll( Model model) throws IllegalAccessException {
-        List<User> users = userService.findAll();
-        for (User user : users) {
-            List<User> oneToEdit = userService.getOneToEdit(user);
-            System.out.println(oneToEdit.size());
+    public String getAll(
+            Model model,
+            @Valid @ModelAttribute SearchForm searchForm,
+            @PageableDefault(page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE) Pageable pageable,
+            Authentication authentication
+            )
+    {
+        Page<User> users = null;
+        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
 
+        if (searchForm.getTerm() == null) {
+            users = userService.findAll(user, pageable);
+        } else {
+            if (searchForm.getTerm().isEmpty()) {
+                users = userService.findAll(user, pageable);
+            } else {
+                users = userService.findBySearchTerm(user, searchForm.getTerm(), pageable);
+            }
         }
 
         model.addAttribute("entities", users);
+        model.addAttribute("countPages", users.getTotalPages());
+        model.addAttribute("searchForm", searchForm);
+        model.addAttribute("availableCountPages", AVAILABLE_COUNT_PAGES.split(","));
+
         return pathToView("list");
 
     }

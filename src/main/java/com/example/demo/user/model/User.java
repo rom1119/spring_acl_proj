@@ -47,11 +47,11 @@ public class User implements ResourceInterface, AclResourceInterface {
 
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY, optional = false, orphanRemoval = true)
+            fetch = FetchType.EAGER, optional = false, orphanRemoval = true)
     private UserDetails userDetails;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @Fetch(FetchMode.JOIN)
+    @Fetch(FetchMode.SELECT)
     @JoinTable(
             name = "user_has_role",
             joinColumns = { @JoinColumn(name = "user_id") },

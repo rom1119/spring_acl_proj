@@ -1,7 +1,7 @@
 package com.example.demo.main.service;
 
 
-import com.example.demo.acl.config.CustomUserDetails;
+import com.example.demo.user.model.CustomUserDetails;
 import com.example.demo.user.model.Privilege;
 import com.example.demo.user.model.Role;
 import com.example.demo.user.model.User;

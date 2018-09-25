@@ -1,7 +1,7 @@
 <form th:fragment="search (searchForm, mainPath)" th:action="${mainPath}" th:object="${searchForm}" xmlns:th="http://www.w3.org/1999/xhtml" th:method="get" class="form-inline row col-12 my-2 my-lg-0">
     <div class="ml-auto mr-auto py-3">
         <input class="form-control mr-sm-2" th:field="*{size}" type="hidden" aria-label="size">
-        <input class="form-control mr-sm-2" th:field="*{page}" value="0" type="hidden" aria-label="size">
+        <input class="form-control mr-sm-2" name="page" value="0" type="hidden" aria-label="size">
         <input class="form-control mr-sm-2" th:field="*{term}" type="text" placeholder="Szukana fraza" aria-label="Search">
 
         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Wyszukaj</button>
