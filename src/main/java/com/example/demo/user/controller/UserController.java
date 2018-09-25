@@ -139,7 +139,7 @@ public class UserController extends AbstractAclController<User> {
     }
 
     @PreAuthorize("hasAuthority('WRITE_PRIVILEGE')")
-    @RequestMapping(path = "/{id}/new", method = RequestMethod.GET)
+    @RequestMapping(path = "/new", method = RequestMethod.GET)
     public String createView(Model model)
     {
         UserDto entity = new UserDto();
@@ -183,8 +183,6 @@ public class UserController extends AbstractAclController<User> {
 
         UserDto userDto = modelMapper.map(user, UserDto.class);
 
-        List<Role> roles = roleRepository.findAll();
-        model.addAttribute("roles", roles);
         model.addAttribute("user", userDto);
         return pathToView("edit");
     }
@@ -193,24 +191,19 @@ public class UserController extends AbstractAclController<User> {
     public String editProccess(@Param("user") @Valid @ModelAttribute("user") UserDto userDto,
                        BindingResult result,
                        Model model,
-                       RedirectAttributes attributes) throws IOException {
+                       RedirectAttributes attributes) throws Exception {
         User userDb = userService.findByIdToEdit(userDto.getId());
         if (userDb == null) {
             throw new ResourceNotFoundException("Nie znaleziono strony");
         }
 
         if (result.hasErrors()) {
-            List<Role> roles = roleRepository.findAll();
-            model.addAttribute("roles", roles);
             model.addAttribute("user", userDto);
             return pathToView("edit");
         }
 
-        User user = modelMapper.map(userDto, User.class);
-        user.getUserDetails().setFileName(userDb.getUserDetails().getFileName());
-
+        User user = userService.updateUser(userDb, userDto);
         storageService.updateFile(user.getUserDetails());
-        userRepository.save(user);
 
         attributes.addFlashAttribute("save", true);
         attributes.addFlashAttribute("userName", userDto.getEmail());
@@ -219,6 +212,7 @@ public class UserController extends AbstractAclController<User> {
 
     }
 
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(path = "/{id}/delete", method = RequestMethod.GET)
     public String delete(@PathVariable Long id, RedirectAttributes attributes) throws IOException {
         System.out.println("raz");
@@ -266,10 +260,6 @@ public class UserController extends AbstractAclController<User> {
 
         }
 
-        result.getAllErrors().stream().forEach(el -> {
-            System.out.println(el.toString());
-        });
-
         if (result.hasErrors()) {
             model.addAttribute("entity", userDto);
             return pathToView("changePassword");
@@ -282,6 +272,56 @@ public class UserController extends AbstractAclController<User> {
 
         return redirectToIndex();
     }
+
+    @RequestMapping(path = "/{id}/change_roles", method = RequestMethod.GET)
+    public String changeRolesView(@PathVariable final Long id, Model model)
+    {
+        User user = userService.findByIdToChangeRoles(id);
+        if (user == null) {
+            throw new ResourceNotFoundException("Nie znaleziono strony");
+        }
+
+        UserDto userDto = new UserDto();
+        userDto.setId(user.getId());
+        userDto.setVersion(user.getVersion());
+        userDto.setRoles(user.getRoles());
+
+        List<Role> roles = roleRepository.findAll();
+        model.addAttribute("roles", roles);
+        model.addAttribute("entity", userDto);
+
+        return pathToView("changeRoles");
+    }
+
+    @RequestMapping(path = "/change_roles", method = RequestMethod.POST)
+    public String changeRolesProccess(
+            @Valid @ModelAttribute("entity") final UserDto userDto,
+            BindingResult result,
+            RedirectAttributes attributes,
+            Model model)
+    {
+        User user = userService.findByIdToChangeRoles(userDto.getId());
+        if (user == null) {
+            throw new ResourceNotFoundException("Nie znaleziono strony");
+        }
+
+        if (result.hasErrors()) {
+            List<Role> roles = roleRepository.findAll();
+            model.addAttribute("roles", roles);
+            model.addAttribute("entity", userDto);
+            return pathToView("changeRoles");
+        }
+
+        userService.changeRoles(userDto);
+
+        attributes.addAttribute("rolesChanges", true);
+        attributes.addAttribute("userName", user.getEmail());
+
+        return redirectToIndex();
+    }
+
+
+
 
     @Override
     protected String pathToView(String view)

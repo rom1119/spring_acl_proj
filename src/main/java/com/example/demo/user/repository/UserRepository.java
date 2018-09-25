@@ -19,6 +19,20 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     public Optional<User> findById(Long id);
 
+    @Query(
+            "SELECT DISTINCT u FROM User u " +
+            "LEFT JOIN u.roles r " +
+            "LEFT JOIN u.userDetails ud " +
+            "WHERE " +
+                " (" +
+                "LOWER(u.email) LIKE LOWER(CONCAT('%',:searchTerm, '%')) OR " +
+                "LOWER(r.name) LIKE LOWER(CONCAT('%',:searchTerm, '%')) OR " +
+                "LOWER(ud.firstName) LIKE LOWER(CONCAT('%',:searchTerm, '%')) OR " +
+                "LOWER(ud.lastName) LIKE LOWER(CONCAT('%',:searchTerm, '%')) " +
+                " ) "
+    )
+    Page<User> findAll(@Param("searchTerm") String searchTerm, Pageable pageable);
+
     public User findByEmail(String email);
 
     @Query(
@@ -63,8 +77,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(
             "SELECT DISTINCT u FROM User u " +
-            "JOIN u.roles r " +
-            "JOIN u.userDetails ud " +
+            "LEFT JOIN u.roles r " +
+            "LEFT JOIN u.userDetails ud " +
             "WHERE " +
             " u.id IN " +
                 " ( " +

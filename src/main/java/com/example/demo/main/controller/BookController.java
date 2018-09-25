@@ -7,6 +7,7 @@ import com.example.demo.main.repository.BookRepository;
 import com.example.demo.acl.service.CustomAclService;
 import com.example.demo.main.service.BookService;
 import com.example.demo.user.exception.ResourceNotFoundException;
+import com.example.demo.user.model.CustomUserDetails;
 import com.example.demo.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +20,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.model.AccessControlEntry;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -90,7 +92,7 @@ public class BookController extends AbstractAclController<Book> {
     }
 
     @PreAuthorize("hasAuthority('WRITE_PRIVILEGE')")
-    @RequestMapping(path = "/{id}/new", method = RequestMethod.GET)
+    @RequestMapping(path = "/new", method = RequestMethod.GET)
     public String createView(Model model)
     {
         Book entity = new Book();
@@ -105,7 +107,9 @@ public class BookController extends AbstractAclController<Book> {
     public String createProccess(@Param("entity") @Valid @ModelAttribute Book entity,
                                  BindingResult result,
                                  RedirectAttributes redirectAttributes,
-                                 Model model)
+                                 Model model,
+                                 Authentication authentication
+                        )
     {
         if (result.hasErrors()) {
             model.addAttribute("entity", entity);
@@ -113,7 +117,9 @@ public class BookController extends AbstractAclController<Book> {
         }
 
         bookRepository.save(entity);
-        aclService.getAcl(entity.getClass(), entity.getId());
+        User user = ((CustomUserDetails)authentication.getPrincipal()).getUser();
+        aclService.createAclWithUserSid(entity.getClass(), entity.getId(), user);
+
         redirectAttributes.addFlashAttribute("new", true);
 //        redirectAttributes.addFlashAttribute("name", aclObjectIdentity.ge());
         return redirectToIndex();

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:td="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{Layout.html}"><head>
+</head>
+<body>
+
+<section layout:fragment="content" class="container">
+
+    <h1 th:text="#{registerForm.title}">form</h1>
+    <form th:action="@{/user/change_roles}" th:object="${entity}" method="POST" enctype="multipart/form-data">
+        <input type="hidden" th:field="*{id}">
+        <input type="hidden" th:field="*{version}"/>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="roles" th:text="#{registerForm.label.roles}">role</label>
+                <select th:field="*{roles}" multiple id="roles">
+                    <option th:each="role : ${roles}" th:text="${role.name}" th:value="${role.id}">
+                        ROLE_ADMIN
+                    </option>
+                </select>
+                <div class="invalid-feedback"
+                     th:each="error: ${#fields.errors('roles')}"
+                     th:text="${error}">
+                    Invalid value
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" th:text="#{editForm.title}" class="btn btn-primary">Sign in</button>
+    </form>
+
+</section>
+
+<a th:href="@{/login.html}" th:text="#{label.button.loginLink}">login</a>
+</body>
+</html>

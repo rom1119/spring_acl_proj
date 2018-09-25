@@ -43,6 +43,7 @@ public class UserDto implements Serializable {
 
     private UserDetails userDetails;
 
+    @NotEmpty
     private Set<Role> roles;
 
     public UserDto() {

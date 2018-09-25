@@ -9,6 +9,7 @@ import com.example.demo.user.model.UserDto;
 import com.example.demo.user.repository.RoleRepository;
 import com.example.demo.user.repository.UserDetailsRepository;
 import com.example.demo.user.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,6 +41,9 @@ public class UserService implements IUserService {
 
     @Autowired
     private CustomAclService aclService;
+
+    @Autowired
+    protected ModelMapper modelMapper;
 
 //    @Autowired
 //    private PasswordEncoder passwordEncoder;
@@ -98,78 +102,44 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User updateUser(UserDto accountDto) throws Exception {
-        return null;
+    public User updateUser(User userDb, UserDto userDto) throws Exception {
+
+        User user = modelMapper.map(userDto, User.class);
+        user.getUserDetails().setFileName(userDb.getUserDetails().getFileName());
+        user.setRoles(userDb.getRoles());
+
+        userRepository.save(user);
+
+        return user;
     }
 
+    @Override
+    public User changeRoles(UserDto userDto) {
+        User user = userRepository.findById(userDto.getId()).get();
+        user.setRoles(userDto.getRoles());
+
+        userRepository.save(user);
+
+        return user;
+    }
 
     @Override
     public Page<User> findAll(CustomUserDetails userdetails, Pageable pageable) {
+        if (userdetails.hasSuperAdmin()) {
+            return userRepository.findAll(pageable);
+        }
         Permission read = BasePermission.READ;
         return userRepository.findAllCustomPageable(User.class.getName(), userdetails.getUser().getEmail(), read.getMask(), pageable);
     }
 
     @Override
     public Page<User> findBySearchTerm(CustomUserDetails user, String term, Pageable pageable) {
+        if (user.hasSuperAdmin()) {
+            return userRepository.findAll(term, pageable);
+        }
         Permission read = BasePermission.READ;
         return userRepository.findBySearchTermPageable(User.class.getName(), user.getUser().getEmail(), read.getMask(), term, pageable);
 
-    }
-
-    public User[] filterAccessibleElements(Page<User> els, Pageable pageable)
-    {
-        User[] res = new User[pageable.getPageSize()];
-
-        System.out.println(els.getContent().size());
-        for(int i = 0; i < els.getContent().size(); i++) {
-            res[i] = els.getContent().get(i);
-        }
-        return res;
-    }
-
-    @Override
-    public List<User> findToPage(String term, Pageable pageable) {
-
-        return searchWhileIsFullPage(term, pageable);
-    }
-
-    private List<User> searchWhileIsFullPage(String term, Pageable pageable)
-    {
-//        List<User> res = new ArrayList<>();
-//        int currentPage = pageable.getPageNumber();
-//        Pageable pageableToFind = PageRequest.of(currentPage, pageable.getPageSize());
-//        Page<User> page = null;
-//
-//        while(res.size() < pageable.getPageSize()) {
-//            User[] users = null;
-//            if (term == null) {
-//                page = findAll(pageableToFind);
-//            } else {
-//                if(term.isEmpty()) {
-//                    page = findAll(pageableToFind);
-//                } else {
-//                    page = findBySearchTerm(term, pageableToFind);
-//                }
-//
-//            }
-//            users = filterAccessibleElements(page, pageable);
-//
-//            for (int i = 0; i < users.length; i++) {
-//                if (res.size() == pageable.getPageSize()) {
-//                    res.add(users[i]);
-//                }
-//            }
-//
-//            if (currentPage < page.getTotalPages()) {
-//                currentPage++;
-//            } else {
-//                return res;
-//            }
-//        }
-//
-//        return res;
-
-        return null;
     }
 
     @Override
@@ -194,6 +164,11 @@ public class UserService implements IUserService {
 
     @Override
     public User findByIdToChangePassword(Long id) {
+        return userRepository.findById(id).get();
+    }
+
+    @Override
+    public User findByIdToChangeRoles(Long id) {
         return userRepository.findById(id).get();
     }
 
@@ -240,6 +215,11 @@ public class UserService implements IUserService {
 
     @Override
     public List<User> getOneToAdministration(User user) {
+        return getOneMethod(user);
+    }
+
+    @Override
+    public List<User> getOneToChangeRoles(User user) {
         return getOneMethod(user);
     }
 

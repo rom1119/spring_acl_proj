@@ -20,16 +20,13 @@ public interface IUserService extends IAclService<User> {
 
     User changePassword(UserDto accountDto);
 
-    User updateUser(UserDto accountDto) throws Exception;
+    User changeRoles(UserDto userDto);
 
-    @PostAuthorize("hasPermission(returnObject, 'READ') or hasRole('SUPER_ADMIN') or isOwner(returnObject)")
-    User[] filterAccessibleElements(Page<User> els, Pageable pageable);
+    User updateUser(User user, UserDto accountDto) throws Exception;
 
     Page<User> findAll(CustomUserDetails user, Pageable pageable);
 
     Page<User> findBySearchTerm(CustomUserDetails user, String term, Pageable pageable);
-
-    List<User> findToPage(String term, Pageable pageable);
 
     @PostAuthorize("hasPermission(returnObject, 'READ') or hasRole('SUPER_ADMIN') or isOwner(returnObject)")
     User findByIdToView(Long id);
@@ -42,6 +39,9 @@ public interface IUserService extends IAclService<User> {
 
     @PostAuthorize("isOwner(returnObject) ")
     User findByIdToChangePassword(Long id);
+
+    @PostAuthorize("hasRole('SUPER_ADMIN')")
+    User findByIdToChangeRoles(Long id);
 
     @Override
     @PostAuthorize("hasPermission(returnObject, 'ADMINISTRATION') or isOwner(returnObject)")
@@ -64,4 +64,8 @@ public interface IUserService extends IAclService<User> {
 
     @PostFilter("hasPermission(filterObject, 'ADMINISTRATION') or isOwner(filterObject)")
     public List<User> getOneToAdministration(@Param("entity") User user);
+
+    @PostFilter("hasRole('SUPER_ADMIN')")
+    public List<User> getOneToChangeRoles(@Param("entity") User user);
+
 }

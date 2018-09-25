@@ -57,33 +57,6 @@
 
         <div class="form-row">
             <div class="form-group col-md-6">
-                <label for="password" th:text="#{registerForm.label.password}">password</label>
-                <input type="text" th:field="*{password}" th:value="|''|" class="form-control" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''" id="password" >
-                <div class="invalid-feedback"
-                     th:each="error: ${#fields.errors('password')}"
-                     th:text="${error}">
-                    Please provide a valid password.
-                </div>
-            </div>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label for="password" th:text="#{registerForm.label.roles}">role</label>
-                <select th:field="*{roles}" multiple>
-                    <option th:each="role : ${roles}" th:text="${role.name}" th:value="${role.id}">
-                        ROLE_ADMIN
-                    </option>
-                </select>
-                <div class="invalid-feedback"
-                     th:each="error: ${#fields.errors('roles')}"
-                     th:text="${error}">
-                    Invalid value
-                </div>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-6">
                 <label for="image" th:text="#{registerForm.label.image}">role</label>
                 <input type="file" th:field="*{file}" class="form-control" th:classappend="${#fields.hasErrors('file')} ? 'is-invalid' : ''" id="image" th:placeholder="#{registerForm.label.image}">
                 <div class="invalid-feedback"
@@ -98,6 +71,5 @@
 
 </section>
 
-<a th:href="@{/login.html}" th:text="#{label.button.loginLink}">login</a>
 </body>
 </html>

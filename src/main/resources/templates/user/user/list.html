@@ -39,7 +39,8 @@
                 <a th:href="@{/user/{id}(id=*{id})}" class="btn btn-outline-success btn-sm">Zobacz szczegóły</a>
                 <a th:href="@{/user/{id}/edit(id=*{id})}"  th:if="${#arrays.length(@userService.getOneToEdit(entity)) > 0}" class="btn btn-outline-success btn-sm">Edytuj</a>
                 <a th:href="@{/user/{id}/change_password(id=*{id})}" th:if="${#arrays.length(@userService.getOneToChangePassword(entity)) > 0}" class="btn btn-outline-success btn-sm">Zmień hasło</a>
-                <a th:href="@{/user/{id}/delete(id=*{id})}" th:if="${#arrays.length(@userService.getOneToDelete(entity)) > 0}"  class="btn btn-outline-danger btn-sm">Usuń</a>
+                <a th:href="@{/user/{id}/change_roles(id=*{id})}" th:if="${#arrays.length(@userService.getOneToChangeRoles(entity)) > 0}" class="btn btn-outline-success btn-sm">Zmień role</a>
+                <a th:href="@{/user/{id}/delete(id=*{id})}" sec:authorize="hasRole('SUPER_ADMIN')"  class="btn btn-outline-danger btn-sm">Usuń</a>
 
             </td>
         </tr>

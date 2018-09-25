@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class CustomUserDetails implements UserDetails {
 
@@ -88,5 +89,10 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public int hashCode() {
         return (getId() !=null? getId().hashCode() : 0);
+    }
+
+    public boolean hasSuperAdmin() {
+        Stream<? extends GrantedAuthority> role_super_admin = getAuthorities().stream().filter(el -> ((GrantedAuthority) el).getAuthority().equalsIgnoreCase("ROLE_SUPER_ADMIN"));
+        return role_super_admin.count() > 0;
     }
 }

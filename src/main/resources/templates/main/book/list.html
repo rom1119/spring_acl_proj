@@ -12,6 +12,9 @@
     <h3 th:if="${removed}" th:text="|Książka '${name}' została usunięta|">Usunięto</h3>
     <h3 th:if="${edited}" th:text="|Książka '${name}' została zapisana|">Zapisano</h3>
     <div th:replace="search.html :: search(searchForm=${searchForm}, mainPath=@{/book})" ></div>
+    <div class="row py-3">
+        <a th:href="@{/book/new}" class="btn btn-outline-success btn-sm mx-auto ">Dodaj książkę</a>
+    </div>
 
     <table class="table">
         <caption>List of users</caption>
