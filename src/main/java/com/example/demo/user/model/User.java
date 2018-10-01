@@ -23,7 +23,6 @@ import java.util.Set;
 @NamedQuery(name="User.findAllWhereIsAsdInFirstName", query="SELECT u from User u left join u.userDetails ud where ud.firstName LIKE '%asd%'")
 //@JsonIgnoreProperties({"id", "firstName"})
 //@JsonPropertyOrder({ "name", "id" })
-@Secured("USER_OWNER")
 public class User implements ResourceInterface, AclResourceInterface {
 
     @Id
@@ -45,7 +44,6 @@ public class User implements ResourceInterface, AclResourceInterface {
 
     private boolean tokenExpired;
 
-
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL,
             fetch = FetchType.EAGER, optional = false, orphanRemoval = true)
     private UserDetails userDetails;
@@ -61,6 +59,15 @@ public class User implements ResourceInterface, AclResourceInterface {
 
     public User() {
         setRoles(new HashSet<Role>());
+    }
+
+    public User(String email, String password, boolean enabled, UserDetails userDetails, Set<Role> roles) {
+        this();
+        this.password = password;
+        this.email = email;
+        this.enabled = enabled;
+        setUserDetails(userDetails);
+        setRoles(roles);
     }
 
     @Override

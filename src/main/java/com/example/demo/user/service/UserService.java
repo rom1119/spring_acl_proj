@@ -12,20 +12,18 @@ import com.example.demo.user.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.model.Permission;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class UserService implements IUserService {
@@ -45,14 +43,14 @@ public class UserService implements IUserService {
     @Autowired
     protected ModelMapper modelMapper;
 
-//    @Autowired
-//    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private EntityManager entityManager;
 
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
 
 
     @Transactional
@@ -65,12 +63,10 @@ public class UserService implements IUserService {
                     "There is an account with that email adress: "
                             +  accountDto.getEmail());
         }
-
-
 //        entityManager = emf.createEntityManager();
 
         User user = new User();
-        user.setPassword(passwordEncoder().encode(accountDto.getPassword()));
+        user.setPassword(passwordEncoder.encode(accountDto.getPassword()));
         user.setEmail(accountDto.getEmail());
         user.setEnabled(true);
         user.addRole(roleRepository.findByName("ROLE_USER"));
@@ -94,7 +90,7 @@ public class UserService implements IUserService {
     public User changePassword(UserDto accountDto) {
 
         User user = userRepository.findById(accountDto.getId()).get();
-        user.setPassword(passwordEncoder().encode(accountDto.getPassword()));
+        user.setPassword(passwordEncoder.encode(accountDto.getPassword()));
 
         userRepository.save(user);
 
@@ -143,33 +139,33 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User findByIdToView(Long id) {
-        return userRepository.findById(id).get();
+    public User findByIdToView(Long id) throws NoSuchElementException {
+        return findOne(id);
     }
 
     @Override
-    public User findByIdToEdit(Long id) {
-        return userRepository.findById(id).get();
+    public User findByIdToEdit(Long id) throws NoSuchElementException {
+        return findOne(id);
     }
 
     @Override
-    public User findByIdToDelete(Long id) {
-        return userRepository.findById(id).get();
+    public User findByIdToDelete(Long id) throws NoSuchElementException {
+        return findOne(id);
     }
 
     @Override
-    public User findByIdToAdministration(Long id) {
-        return userRepository.findById(id).get();
+    public User findByIdToAdministration(Long id) throws NoSuchElementException {
+        return findOne(id);
     }
 
     @Override
-    public User findByIdToChangePassword(Long id) {
-        return userRepository.findById(id).get();
+    public User findByIdToChangePassword(Long id) throws NoSuchElementException {
+        return findOne(id);
     }
 
     @Override
-    public User findByIdToChangeRoles(Long id) {
-        return userRepository.findById(id).get();
+    public User findByIdToChangeRoles(Long id) throws NoSuchElementException {
+        return findOne(id);
     }
 
     @Override
@@ -188,7 +184,7 @@ public class UserService implements IUserService {
         return getOneToChangePassword(user).size() > 0;
     }
 
-    private List<User> getOneMethod(User user)
+    private List<User> getOneMethod(User user) throws NoSuchElementException
     {
         User toEdit = findOne(user.getId());
         List<User> arr = new ArrayList<>();
@@ -231,8 +227,12 @@ public class UserService implements IUserService {
         return false;
     }
 
-    private User findOne(Long id) {
-        return userRepository.findById(id).get();
+    private User findOne(Long id) throws NoSuchElementException {
+        try {
+            return userRepository.findById(id).get();
+        } catch (NoSuchElementException e) {
+            return null;
+        }
     }
 
 }

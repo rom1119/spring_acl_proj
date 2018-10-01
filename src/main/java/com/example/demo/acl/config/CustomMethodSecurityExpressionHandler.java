@@ -36,8 +36,6 @@ public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurity
     protected MethodSecurityExpressionOperations createSecurityExpressionRoot(
             Authentication authentication, MethodInvocation invocation) {
 
-//        MethodSecurityExpressionOperations securityExpressionRoot = super.createSecurityExpressionRoot(authentication, invocation);
-//        securityExpressionRoot = (CustomMethodSecurityExpressionRoot) securityExpressionRoot;
          root = new CustomMethodSecurityExpressionRoot(authentication);
         root.setPermissionEvaluator(getPermissionEvaluator());
         root.setTrustResolver(this.trustResolver);
@@ -46,7 +44,6 @@ public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurity
         root.setModelMapper(modelMapper);
         root.setAclService(aclService);
 
-//            System.out.println("LLL");
 //            System.out.println(userRepository);
 
         return root;

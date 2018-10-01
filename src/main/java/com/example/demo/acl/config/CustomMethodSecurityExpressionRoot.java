@@ -36,7 +36,7 @@ public class CustomMethodSecurityExpressionRoot extends SecurityExpressionRoot i
     public boolean isOwner(Long id, String entityType) {
 //        System.out.println(id);
 //        System.out.println(entityType);
-//        System.out.println("DDD");
+        System.out.println("DDD");
 //        System.out.println(userRepository);
         if (entityType.equalsIgnoreCase("user")) {
             Optional<User> user = userRepository.findById((Long) id);
@@ -54,6 +54,14 @@ public class CustomMethodSecurityExpressionRoot extends SecurityExpressionRoot i
     }
 
     public boolean isOwner(Object object) {
+
+
+        if (object == null) {
+            return true;
+        }
+//        System.out.println(object instanceof User);
+//        System.out.println(((User)object).getId() );
+//        System.out.println("isNull");
 
         if (object instanceof User || object instanceof UserDto ) {
             return checkUser(object);

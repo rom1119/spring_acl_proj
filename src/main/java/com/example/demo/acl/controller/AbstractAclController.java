@@ -86,7 +86,8 @@ public abstract class AbstractAclController<T extends AclResourceInterface> {
             RedirectAttributes attributes,
             Authentication authentication
     ) throws IOException, IllegalAccessException {
-
+        System.out.println(authentication.getPrincipal());
+        System.out.println("L");
         if (result.hasErrors()) {
             Map<String, Permission> availablePermission = aclService.getAvailablePermission();
             List<AclSecurityID> securityIDList = securityIDRepository.findAll();
@@ -97,8 +98,9 @@ public abstract class AbstractAclController<T extends AclResourceInterface> {
             model.addAttribute("targetSecuredObjectId", id);
             return pathToView("aclEntry/new");
         }
-
+        System.out.println("raz");
         AclResourceInterface securedEntity = securedEntityService.findByIdToAdministration(id);
+        System.out.println("dwa");
 
         AccessControlEntry aclEntry = aclService.createAclEntry(entity, securedEntity.getClass(), id);
 
@@ -121,12 +123,13 @@ public abstract class AbstractAclController<T extends AclResourceInterface> {
             @Param("aclEntryIndex") @PathVariable int aclEntryIndex,
             Model model)
             throws Throwable {
+        System.out.println("raz");
         AclResourceInterface securedEntity = securedEntityService.findByIdToAdministration(targetSecuredObjectId);
+        System.out.println("dwa");
 
         if (securedEntity == null) {
             throw new ResourceNotFoundException("Nie znaleziono strony");
         }
-
         aclObjectDomainService.checkAccessObjectDomain(securedEntity);
 
         AccessControlEntry aclEntry = aclEntryService.getAce(securedEntity, aclEntryIndex)

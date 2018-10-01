@@ -61,11 +61,6 @@ public class SecurityController {
 //        System.out.println("/register");
 //        System.out.println(result.hasErrors());
 
-        result.getAllErrors().stream().forEach(e -> {
-            System.out.println(e.toString());
-
-        });
-
         User registered = new User();
         if (!result.hasErrors()) {
             registered = createUserAccount(accountDto, result);

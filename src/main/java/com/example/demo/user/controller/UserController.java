@@ -50,6 +50,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.springframework.beans.support.PagedListHolder.DEFAULT_PAGE_SIZE;
 
@@ -100,6 +101,7 @@ public class UserController extends AbstractAclController<User> {
             Authentication authentication
             )
     {
+
         Page<User> users = null;
         CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
 
@@ -124,13 +126,12 @@ public class UserController extends AbstractAclController<User> {
 
 
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getOne(@PathVariable Long id, Model model)
+    public String getOne(@PathVariable Long id, Model model, Authentication authentication) throws ResourceNotFoundException
     {
-        User user = userService.findByIdToView(id);
-        if (user == null) {
-            throw new ResourceNotFoundException("Nie znaleziono strony");
-        }
+        System.out.println(id);
+        System.out.println(userRepository.findAll().size());
 
+        User user = Optional.ofNullable(userService.findByIdToView(id)).orElseThrow(() -> new ResourceNotFoundException("Nie znaleziono strony"));
         List<AccessControlEntry> aclEntries = aclService.getAclEntries(user.getClass(), user.getId());
 //        aclEntries.get(0).
         model.addAttribute("entity", user);
@@ -176,10 +177,8 @@ public class UserController extends AbstractAclController<User> {
     @RequestMapping(path = "/{id}/edit", method = RequestMethod.GET)
     public String editView(@Param("id") @PathVariable Long id, Model model)
     {
-        User user = userService.findByIdToEdit(id);
-        if (user == null) {
-            throw new ResourceNotFoundException("Nie znaleziono strony");
-        }
+        User user = Optional.ofNullable(userService.findByIdToEdit(id))
+                .orElseThrow(() -> new ResourceNotFoundException("Nie znaleziono strony"));
 
         UserDto userDto = modelMapper.map(user, UserDto.class);
 
@@ -192,10 +191,9 @@ public class UserController extends AbstractAclController<User> {
                        BindingResult result,
                        Model model,
                        RedirectAttributes attributes) throws Exception {
-        User userDb = userService.findByIdToEdit(userDto.getId());
-        if (userDb == null) {
-            throw new ResourceNotFoundException("Nie znaleziono strony");
-        }
+        User userDb = Optional.ofNullable(userService.findByIdToEdit(userDto.getId()))
+                        .orElseThrow(() -> new ResourceNotFoundException("Nie znaleziono strony"));
+
 
         if (result.hasErrors()) {
             model.addAttribute("user", userDto);
@@ -215,12 +213,9 @@ public class UserController extends AbstractAclController<User> {
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     @RequestMapping(path = "/{id}/delete", method = RequestMethod.GET)
     public String delete(@PathVariable Long id, RedirectAttributes attributes) throws IOException {
-        System.out.println("raz");
-        User user = userService.findByIdToDelete(id);
-        System.out.println("dwa");
-        if (user == null) {
-            throw new ResourceNotFoundException("Nie znaleziono strony");
-        }
+        User user = Optional.ofNullable(userService.findByIdToDelete(id))
+                .orElseThrow(() -> new ResourceNotFoundException("Nie znaleziono strony"));
+
         storageService.deleteFile(user.getUserDetails());
         userRepository.delete(user);
 
@@ -233,10 +228,8 @@ public class UserController extends AbstractAclController<User> {
     @RequestMapping(path = "/{id}/change_password", method = RequestMethod.GET)
     public String changePasswordView(@PathVariable final Long id, Model model)
     {
-        User user = userService.findByIdToChangePassword(id);
-        if (user == null) {
-            throw new ResourceNotFoundException("Nie znaleziono strony");
-        }
+        User user = Optional.ofNullable(userService.findByIdToChangePassword(id))
+                .orElseThrow(() -> new ResourceNotFoundException("Nie znaleziono strony"));
 
         UserDto userDto = new UserDto();
         userDto.setId(user.getId());
@@ -254,11 +247,8 @@ public class UserController extends AbstractAclController<User> {
              RedirectAttributes attributes,
              Model model)
     {
-        User user = userService.findByIdToChangePassword(userDto.getId());
-        if (user == null) {
-            throw new ResourceNotFoundException("Nie znaleziono strony");
-
-        }
+        User user = Optional.ofNullable(userService.findByIdToChangePassword(userDto.getId()))
+                .orElseThrow(() -> new ResourceNotFoundException("Nie znaleziono strony"));
 
         if (result.hasErrors()) {
             model.addAttribute("entity", userDto);
@@ -276,10 +266,8 @@ public class UserController extends AbstractAclController<User> {
     @RequestMapping(path = "/{id}/change_roles", method = RequestMethod.GET)
     public String changeRolesView(@PathVariable final Long id, Model model)
     {
-        User user = userService.findByIdToChangeRoles(id);
-        if (user == null) {
-            throw new ResourceNotFoundException("Nie znaleziono strony");
-        }
+        User user = Optional.ofNullable(userService.findByIdToChangeRoles(id))
+                .orElseThrow(() -> new ResourceNotFoundException("Nie znaleziono strony"));
 
         UserDto userDto = new UserDto();
         userDto.setId(user.getId());
@@ -300,10 +288,8 @@ public class UserController extends AbstractAclController<User> {
             RedirectAttributes attributes,
             Model model)
     {
-        User user = userService.findByIdToChangeRoles(userDto.getId());
-        if (user == null) {
-            throw new ResourceNotFoundException("Nie znaleziono strony");
-        }
+        User user = Optional.ofNullable(userService.findByIdToChangeRoles(userDto.getId()))
+                .orElseThrow(() -> new ResourceNotFoundException("Nie znaleziono strony"));
 
         if (result.hasErrors()) {
             List<Role> roles = roleRepository.findAll();

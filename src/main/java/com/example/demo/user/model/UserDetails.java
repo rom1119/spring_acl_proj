@@ -2,6 +2,7 @@ package com.example.demo.user.model;
 
 import com.example.demo.main.model.ResourceInterface;
 import com.example.demo.main.validation.Image;
+import com.example.demo.main.validation.group.Registration;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,12 +21,12 @@ public class UserDetails implements ResourceInterface, FileInterface {
     @Column(name = "id", unique = true)
     private Long id;
 
-    @NotNull
-    @NotEmpty
+    @NotNull(groups = {Registration.class})
+    @NotEmpty(groups = {Registration.class})
     private String firstName;
 
-    @NotNull
-    @NotEmpty
+    @NotNull(groups = {Registration.class})
+    @NotEmpty(groups = {Registration.class})
     private String lastName;
 
     @Column(name = "file_name")
@@ -41,6 +42,15 @@ public class UserDetails implements ResourceInterface, FileInterface {
 
     @Column
     private int score;
+
+    public UserDetails() {
+    }
+
+    public UserDetails(String firstName,
+                       String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
 
     public Long getId() {
         return id;

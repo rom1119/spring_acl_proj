@@ -42,6 +42,8 @@ public class MyUserDetailsService implements UserDetailsService {
     {
 
         User user = userRepository.findByEmail(email);
+        System.out.println(userRepository.findAll().size());
+        System.out.println(userRepository.findAll().size());
         if (user == null) {
             throw new UsernameNotFoundException(
                     "No user found with username: "+ email);

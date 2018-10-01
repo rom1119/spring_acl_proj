@@ -11,6 +11,7 @@ import com.example.demo.user.model.Role;
 import com.example.demo.user.model.User;
 import com.example.demo.user.model.UserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;

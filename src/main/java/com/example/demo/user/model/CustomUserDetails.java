@@ -30,7 +30,11 @@ public class CustomUserDetails implements UserDetails {
             authorities.add(new SimpleGrantedAuthority(role.getName()));
             role.getPrivileges().stream()
                     .map(p -> new SimpleGrantedAuthority(p.getName()))
-                    .forEach(authorities::add);
+                    .forEach(el -> {
+                        if (!authorities.contains(el)) {
+                            authorities.add(el);
+                        }
+                    });
         }
 
         return authorities;

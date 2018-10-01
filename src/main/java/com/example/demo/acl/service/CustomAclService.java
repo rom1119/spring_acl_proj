@@ -17,6 +17,7 @@ import org.springframework.security.acls.model.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -45,6 +46,7 @@ public class CustomAclService {
         this.aclObjectDomainService = aclObjectDomainService;
     }
 
+    @Transactional
     public List<AccessControlEntry> getAclEntries(Class c, Serializable id)
     {
         ObjectIdentity oi = new ObjectIdentityImpl(c, id);

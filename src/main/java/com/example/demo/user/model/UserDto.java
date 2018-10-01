@@ -5,6 +5,7 @@ import com.example.demo.main.validation.ValidChangePassword;
 import com.example.demo.main.validation.group.PasswordChange;
 import com.example.demo.main.validation.group.Registration;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -41,6 +42,7 @@ public class UserDto implements Serializable {
     @NotNull
     private boolean enabled;
 
+    @Valid
     private UserDetails userDetails;
 
     @NotEmpty
