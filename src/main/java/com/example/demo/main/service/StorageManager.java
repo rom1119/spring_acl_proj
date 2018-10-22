@@ -50,7 +50,7 @@ public class StorageManager implements StorageService {
 
     @Override
     public String updateFile(FileInterface fileWrapper) throws IOException {
-        if (fileWrapper.getFile().isEmpty()) {
+        if (fileWrapper.getFile() == null) {
             return "";
         }
 

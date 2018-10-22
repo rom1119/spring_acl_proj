@@ -2,6 +2,7 @@ package com.example.demo.user.model;
 
 import com.example.demo.main.validation.FieldMatch;
 import com.example.demo.main.validation.ValidChangePassword;
+import com.example.demo.main.validation.group.ChangeRoles;
 import com.example.demo.main.validation.group.PasswordChange;
 import com.example.demo.main.validation.group.Registration;
 
@@ -45,7 +46,7 @@ public class UserDto implements Serializable {
     @Valid
     private UserDetails userDetails;
 
-    @NotEmpty
+    @NotEmpty(groups = {ChangeRoles.class})
     private Set<Role> roles;
 
     public UserDto() {

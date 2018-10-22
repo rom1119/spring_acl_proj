@@ -10,6 +10,7 @@ import com.example.demo.acl.service.AclEntryService;
 import com.example.demo.acl.service.AclObjectDomainService;
 import com.example.demo.acl.service.CustomAclService;
 import com.example.demo.main.form.SearchForm;
+import com.example.demo.main.validation.group.ChangeRoles;
 import com.example.demo.main.validation.group.Created;
 import com.example.demo.main.validation.group.Edited;
 import com.example.demo.main.validation.group.PasswordChange;
@@ -201,7 +202,6 @@ public class UserController extends AbstractAclController<User> {
         }
 
         User user = userService.updateUser(userDb, userDto);
-        storageService.updateFile(user.getUserDetails());
 
         attributes.addFlashAttribute("save", true);
         attributes.addFlashAttribute("userName", userDto.getEmail());
@@ -283,7 +283,7 @@ public class UserController extends AbstractAclController<User> {
 
     @RequestMapping(path = "/change_roles", method = RequestMethod.POST)
     public String changeRolesProccess(
-            @Valid @ModelAttribute("entity") final UserDto userDto,
+            @Validated(ChangeRoles.class) @ModelAttribute("entity") final UserDto userDto,
             BindingResult result,
             RedirectAttributes attributes,
             Model model)

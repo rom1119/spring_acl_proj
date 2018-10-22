@@ -1,6 +1,7 @@
 package com.example.demo.user.service;
 
 import com.example.demo.acl.service.CustomAclService;
+import com.example.demo.main.service.StorageService;
 import com.example.demo.user.exception.EmailExistsException;
 import com.example.demo.user.model.CustomUserDetails;
 import com.example.demo.user.model.User;
@@ -17,9 +18,11 @@ import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -46,7 +49,8 @@ public class UserService implements IUserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private EntityManager entityManager;
+    @Autowired
+    private StorageService storageService;
 
 //    public PasswordEncoder passwordEncoder() {
 //        return new BCryptPasswordEncoder();
@@ -87,6 +91,7 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @Transactional
     public User changePassword(UserDto accountDto) {
 
         User user = userRepository.findById(accountDto.getId()).get();
@@ -98,15 +103,32 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @Transactional
     public User updateUser(User userDb, UserDto userDto) throws Exception {
 
         User user = modelMapper.map(userDto, User.class);
         user.getUserDetails().setFileName(userDb.getUserDetails().getFileName());
         user.setRoles(userDb.getRoles());
 
+        updateImage(user.getUserDetails(), userDto.getUserDetails().getFile());
+
         userRepository.save(user);
 
         return user;
+    }
+
+    public String updateImage(UserDetails userDetails, MultipartFile multipartFile) throws IOException {
+
+        String filename = null;
+        if (!multipartFile.isEmpty()) {
+            userDetails.setFile(multipartFile);
+            filename = storageService.updateFile(userDetails);
+
+//            userDetailsRepository.save(userDetails);
+
+        }
+
+        return filename;
     }
 
     @Override
